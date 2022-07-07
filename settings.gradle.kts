@@ -2,12 +2,11 @@ rootProject.name = "utils"
 
 pluginManagement {
     val kotlinVersion: String by settings
-    val kotlinterVersion: String by settings
+    val ktlintVersion: String by settings
 
     plugins {
         kotlin("jvm") version kotlinVersion
-        kotlin("plugin.serialization") version kotlinVersion
-        id("org.jmailen.kotlinter") version kotlinterVersion
+        id("org.jlleitschuh.gradle.ktlint") version ktlintVersion
         id("maven-publish")
     }
 }

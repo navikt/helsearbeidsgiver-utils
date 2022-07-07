@@ -1,26 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorVersion: String by project
-val kotlinVersion: String by project
-val logbackVersion: String by project
-val mockkVersion: String by project
-val nimbusJoseJwtVersion: String by project
-val helsearbeidsgiverTokenproviderVersion: String by project
-val jacksonVersion = "2.11.2"
+group = "no.nav.helsearbeidsgiver"
+version = "0.1.0"
 
 val githubPassword: String by project
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization")
-    id("org.jmailen.kotlinter")
+    id("org.jlleitschuh.gradle.ktlint")
     id("maven-publish")
 }
 
-group = "no.nav.helsearbeidsgiver"
-version = "0.1.0"
-
-tasks.withType<KotlinCompile>() {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 }
 
@@ -59,17 +50,10 @@ publishing {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-json:$ktorVersion")
-    implementation("io.ktor:ktor-client-serialization:$ktorVersion")
-    implementation("com.nimbusds:nimbus-jose-jwt:$nimbusJoseJwtVersion")
-    implementation("no.nav.helsearbeidsgiver:tokenprovider:0.1.3")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
+    val slf4jVersion: String by properties
+
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
     testImplementation(kotlin("test"))
-    testImplementation("io.ktor:ktor-client-mock:$ktorVersion")
-    testImplementation("io.mockk:mockk:1.9.3")
 }
 
 tasks.withType<KotlinCompile> {

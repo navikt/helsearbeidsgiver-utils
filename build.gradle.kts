@@ -22,6 +22,10 @@ tasks.withType<JavaCompile> {
     sourceCompatibility = "11"
 }
 
+java {
+    withSourcesJar()
+}
+
 tasks {
     test {
         useJUnitPlatform()

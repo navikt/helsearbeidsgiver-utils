@@ -3,8 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 group = "no.nav.helsearbeidsgiver"
 version = "0.1.1"
 
-val githubPassword: String by project
-
 plugins {
     kotlin("jvm")
     id("org.jlleitschuh.gradle.ktlint")
@@ -12,7 +10,16 @@ plugins {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "11"
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+// Kreves for å få korrekt JVM-versjon. Fikses muligens i Kotlin 1.7.20. For mer info, se lenke:
+// https://youtrack.jetbrains.com/issue/KT-52474/An-attribute-orggradlejvmversion-isnt-set-correctly-while-updating-KGP-to-170#focus=Comments-27-6102307.0-0
+tasks.withType<JavaCompile> {
+    targetCompatibility = "11"
+    sourceCompatibility = "11"
 }
 
 tasks {
@@ -22,6 +29,8 @@ tasks {
 }
 
 repositories {
+    val githubPassword: String by project
+
     mavenCentral()
     maven {
         credentials {
@@ -50,14 +59,8 @@ publishing {
 }
 
 dependencies {
-    val slf4jVersion: String by properties
+    val slf4jVersion: String by project
 
-    implementation("org.slf4j:slf4j-api:$slf4jVersion")
+    api("org.slf4j:slf4j-api:$slf4jVersion")
     testImplementation(kotlin("test"))
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-    }
 }

@@ -63,8 +63,14 @@ publishing {
 }
 
 dependencies {
+    val kotestVersion: String by project
+    val logbackVersion: String by project
     val slf4jVersion: String by project
 
     api("org.slf4j:slf4j-api:$slf4jVersion")
     testImplementation(kotlin("test"))
+
+    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }

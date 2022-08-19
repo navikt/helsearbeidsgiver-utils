@@ -12,7 +12,7 @@ import kotlin.time.Duration.Companion.milliseconds
 class LocalCacheTest : StringSpec({
     lateinit var cache: LocalCache<Int>
 
-    beforeEach {
+    beforeTest {
         cache = LocalCache(1.hours, 2)
     }
 

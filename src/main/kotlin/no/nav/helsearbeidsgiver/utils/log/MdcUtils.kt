@@ -1,10 +1,9 @@
-package no.nav.helsearbeidsgiver.utils
+package no.nav.helsearbeidsgiver.utils.log
 
 import org.slf4j.MDC
-import java.security.SecureRandom
 import java.util.UUID
-
-private val RANDOM = SecureRandom()
+import kotlin.random.Random
+import kotlin.random.nextUInt
 
 object MdcUtils {
     private object Keys {
@@ -38,11 +37,8 @@ object MdcUtils {
     }
 }
 
-private fun newCallId(): String {
-    val randomNumber = RANDOM.nextInt(Int.MAX_VALUE)
-    val systemTime = System.currentTimeMillis()
-    return "CallId_${randomNumber}_$systemTime"
-}
+private fun newCallId(): String =
+    "CallId_${Random.nextUInt()}_${System.currentTimeMillis()}"
 
 private fun uuid4(): String =
     UUID.randomUUID().toString()

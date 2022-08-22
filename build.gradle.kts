@@ -9,27 +9,27 @@ plugins {
     id("maven-publish")
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        jvmTarget = "11"
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "11"
+        }
     }
-}
 
 // Kreves for å få korrekt JVM-versjon. Fikses muligens i Kotlin 1.7.20. For mer info, se lenke:
 // https://youtrack.jetbrains.com/issue/KT-52474/An-attribute-orggradlejvmversion-isnt-set-correctly-while-updating-KGP-to-170#focus=Comments-27-6102307.0-0
-tasks.withType<JavaCompile> {
-    targetCompatibility = "11"
-    sourceCompatibility = "11"
+    withType<JavaCompile> {
+        targetCompatibility = "11"
+        sourceCompatibility = "11"
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
+    }
 }
 
 java {
     withSourcesJar()
-}
-
-tasks {
-    test {
-        useJUnitPlatform()
-    }
 }
 
 repositories {
@@ -63,14 +63,15 @@ publishing {
 }
 
 dependencies {
+    val coroutinesVersion: String by project
     val kotestVersion: String by project
     val logbackVersion: String by project
     val slf4jVersion: String by project
 
     api("org.slf4j:slf4j-api:$slf4jVersion")
-    testImplementation(kotlin("test"))
 
     testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 }

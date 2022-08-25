@@ -11,7 +11,7 @@ class LogUtilsTest : StringSpec({
         str.logger().name shouldBeEqualComparingTo str
     }
 
-    "logger fra klasse bruker klassens 'qualied name' som navn" {
+    "logger fra klasse bruker klassens 'qualified name' som navn" {
         class EnKlasse
 
         val enKlasse = EnKlasse()

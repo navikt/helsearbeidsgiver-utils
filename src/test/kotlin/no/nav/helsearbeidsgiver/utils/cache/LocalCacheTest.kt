@@ -108,6 +108,33 @@ class LocalCacheTest : StringSpec({
 
         defaultWasCalled.shouldBeTrue()
     }
+
+    "ved ikke-null cache hentes element fra cache" {
+        val key = "key-1"
+        val value = 1
+
+        // Insert element i cache
+        cache.get(key) { value }
+
+        cache.getIfCacheNotNull(key, ::throwErrorWhenCalled)
+            .shouldBeExactly(value)
+    }
+
+    "ved null-cache brukes resultat fra default-funksjon" {
+        val nullCache: LocalCache<Int>? = null
+
+        val value = 1
+
+        var defaultWasCalled = false
+
+        nullCache.getIfCacheNotNull("key-1") {
+            defaultWasCalled = true
+            value
+        }
+            .shouldBeExactly(value)
+
+        defaultWasCalled.shouldBeTrue()
+    }
 })
 
 private fun throwErrorWhenCalled(): Nothing =

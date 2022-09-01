@@ -39,6 +39,10 @@ class LocalCache<T>(
     }
 }
 
+fun <T> LocalCache<T>?.getIfCacheNotNull(key: String, default: () -> T): T =
+    if (this != null) get(key, default)
+    else default()
+
 private data class Entry<T>(
     val value: T,
     val expiresAt: LocalDateTime,

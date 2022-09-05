@@ -23,7 +23,7 @@ tasks {
         sourceCompatibility = "11"
     }
 
-    withType<Test> {
+    test {
         useJUnitPlatform()
     }
 }
@@ -33,16 +33,8 @@ java {
 }
 
 repositories {
-    val githubPassword: String by project
-
     mavenCentral()
-    maven {
-        credentials {
-            username = System.getenv("GITHUB_ACTOR") ?: "x-access-token"
-            password = System.getenv("GITHUB_TOKEN") ?: githubPassword
-        }
-        setUrl("https://maven.pkg.github.com/navikt/*")
-    }
+    mavenNav("*")
 }
 
 publishing {
@@ -52,13 +44,7 @@ publishing {
         }
     }
     repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/navikt/helsearbeidsgiver-${rootProject.name}")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
+        mavenNav("helsearbeidsgiver-${rootProject.name}")
     }
 }
 
@@ -74,4 +60,16 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+}
+
+fun RepositoryHandler.mavenNav(repo: String): MavenArtifactRepository {
+    val githubPassword: String by project
+
+    return maven {
+        setUrl("https://maven.pkg.github.com/navikt/$repo")
+        credentials {
+            username = "x-access-token"
+            password = githubPassword
+        }
+    }
 }

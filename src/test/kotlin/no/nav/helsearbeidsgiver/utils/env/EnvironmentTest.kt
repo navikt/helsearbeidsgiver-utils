@@ -9,5 +9,4 @@ class EnvironmentTest : StringSpec({
         val settings = DemoSettings()
         settings.javaHome.shouldNotBeEmpty()
     }
-
 })

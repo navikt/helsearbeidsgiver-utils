@@ -1,52 +1,24 @@
-package no.nav.helsearbeidsgiver.utils.env;
+package no.nav.helsearbeidsgiver.utils.env
 
-import java.lang.reflect.Field;
+class Environment {
+    init {
+        injectIt()
+    }
 
-public class Environment {
-
-    public static Object inject(Object objekt) {
-        for (Field f : objekt.getClass().getDeclaredFields()) {
-            f.setAccessible(true);
-            if (f.isAnnotationPresent(EnvironmentValue.class)){
-                String name = f.getAnnotation(EnvironmentValue.class).name();
-                String value = System.getenv(name);
-                if (f.getType() == String.class) {
+    private fun injectIt() {
+        for (f in this.javaClass.declaredFields) {
+            f.isAccessible = true
+            if (f.isAnnotationPresent(EnvironmentValue::class.java)) {
+                val name: String = f.getAnnotation(EnvironmentValue::class.java).name
+                val value = System.getenv(name)
+                if (f.type == String::class.java) {
                     try {
-                        f.set(objekt, value);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
+                        f[this] = value
+                    } catch (e: IllegalAccessException) {
+                        throw RuntimeException(e)
                     }
                 }
             }
         }
-        return objekt;
     }
-
-    public static <K> K read(Class<K> klass) {
-        K object = createNew(klass);
-        for (Field f : object.getClass().getDeclaredFields()) {
-            f.setAccessible(true);
-            if (f.isAnnotationPresent(EnvironmentValue.class)){
-                String name = f.getAnnotation(EnvironmentValue.class).name();
-                String value = System.getenv(name);
-                if (f.getType() == String.class) {
-                    try {
-                        f.set(object, value);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-        }
-        return object;
-    }
-
-    public static <K> K createNew(Class<K> klass) {
-        try {
-            return klass.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
 }

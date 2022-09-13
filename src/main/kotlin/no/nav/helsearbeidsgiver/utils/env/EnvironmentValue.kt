@@ -1,9 +1,7 @@
-package no.nav.helsearbeidsgiver.utils.env;
+package no.nav.helsearbeidsgiver.utils.env
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface EnvironmentValue {
-    String name();
-}
+annotation class EnvironmentValue(val name: String)

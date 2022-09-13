@@ -6,7 +6,7 @@ import io.kotest.matchers.string.shouldNotBeEmpty
 class EnvironmentTest : StringSpec({
 
     "skal kunne lese inn miljø variabler" {
-        System.setProperty("FAKE_ENV", "FAKE")
+        System.setProperty("FAKE_ENV", "DUMMY")
         val settings = DemoSettings()
         settings.javaHome.shouldNotBeEmpty()
     }

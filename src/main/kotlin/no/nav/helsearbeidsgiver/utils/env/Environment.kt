@@ -1,6 +1,6 @@
 package no.nav.helsearbeidsgiver.utils.env
 
-class Environment {
+open class Environment {
     init {
         injectIt()
     }

@@ -1,6 +1,6 @@
 package no.nav.helsearbeidsgiver.utils.env
 
 class DemoSettings {
-    @EnvironmentValue(name = "JAVA_HOME")
+    @EnvironmentValue(name = "PATH")
     var javaHome: String? = null
 }

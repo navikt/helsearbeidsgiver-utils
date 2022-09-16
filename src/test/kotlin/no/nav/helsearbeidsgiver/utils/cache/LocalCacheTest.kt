@@ -29,7 +29,7 @@ class LocalCacheTest : StringSpec({
         // Insert element i cache
         cache.get(key) { value }
 
-        cache.get(key, ::throwErrorWhenCalled)
+        cache.get(key, ::throwError)
             .shouldBeExactly(value)
     }
 
@@ -83,18 +83,18 @@ class LocalCacheTest : StringSpec({
         }
 
         // Sjekk at første/tidligste element er cachet
-        cache.get(keys[0], ::throwErrorWhenCalled)
+        cache.get(keys[0], ::throwError)
             .shouldBeExactly(values[0])
 
         // Insert nytt element, som betyr at første element blir kastet ut av cachen
         cache.get(keys[2]) { values[2] }
 
         // Sjekk at andre element fremdeles er cachet og ikke kastet ut
-        cache.get(keys[1], ::throwErrorWhenCalled)
+        cache.get(keys[1], ::throwError)
             .shouldBeExactly(values[1])
 
         // Sjekk at tredje element er cachet
-        cache.get(keys[2], ::throwErrorWhenCalled)
+        cache.get(keys[2], ::throwError)
             .shouldBeExactly(values[2])
 
         // Sjekk at første element har blitt kastet ut og dermed må insertes på ny
@@ -116,7 +116,7 @@ class LocalCacheTest : StringSpec({
         // Insert element i cache
         cache.get(key) { value }
 
-        cache.getIfCacheNotNull(key, ::throwErrorWhenCalled)
+        cache.getIfCacheNotNull(key, ::throwError)
             .shouldBeExactly(value)
     }
 
@@ -137,5 +137,5 @@ class LocalCacheTest : StringSpec({
     }
 })
 
-private fun throwErrorWhenCalled(): Nothing =
+private fun throwError(): Nothing =
     throw AssertionError("Denne funksjonen skal ikke kalles.")

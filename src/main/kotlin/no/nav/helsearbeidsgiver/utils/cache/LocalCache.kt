@@ -14,7 +14,7 @@ class LocalCache<T>(
 
     private val cache = mutableMapOf<String, Entry<T>>()
 
-    fun get(key: String, default: () -> T): T =
+    suspend fun get(key: String, default: suspend () -> T): T =
         cache[key]
             ?.takeIf { it.isNotExpired() }
             ?.value
@@ -39,7 +39,7 @@ class LocalCache<T>(
     }
 }
 
-fun <T> LocalCache<T>?.getIfCacheNotNull(key: String, default: () -> T): T =
+suspend fun <T> LocalCache<T>?.getIfCacheNotNull(key: String, default: suspend () -> T): T =
     if (this != null) get(key, default)
     else default()
 

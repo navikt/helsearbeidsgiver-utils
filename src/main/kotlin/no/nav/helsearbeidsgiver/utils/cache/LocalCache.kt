@@ -6,7 +6,7 @@ import kotlin.time.toJavaDuration
 
 class LocalCache<T>(
     private val entryDuration: Duration,
-    private val maxEntries: Int,
+    private val maxEntries: Int
 ) {
     init {
         require(maxEntries > 0) { "Parameter `maxEntries` must be greater than 0, but was $maxEntries." }
@@ -27,7 +27,7 @@ class LocalCache<T>(
 
         cache[key] = Entry(
             value,
-            LocalDateTime.now().plus(entryDuration.toJavaDuration()),
+            LocalDateTime.now().plus(entryDuration.toJavaDuration())
         )
 
         return value
@@ -40,12 +40,15 @@ class LocalCache<T>(
 }
 
 suspend fun <T> LocalCache<T>?.getIfCacheNotNull(key: String, default: suspend () -> T): T =
-    if (this != null) get(key, default)
-    else default()
+    if (this != null) {
+        get(key, default)
+    } else {
+        default()
+    }
 
 private data class Entry<T>(
     val value: T,
-    val expiresAt: LocalDateTime,
+    val expiresAt: LocalDateTime
 ) {
     fun isNotExpired(): Boolean =
         expiresAt.isAfter(LocalDateTime.now())

@@ -20,13 +20,13 @@ object MdcUtils {
     inline fun <T> withCallId(fn: () -> T): T =
         withLogField(
             Keys.CALL_ID to newCallId(),
-            fn,
+            fn
         )
 
     inline fun <T> withCallIdAsUuid(fn: () -> T): T =
         withLogField(
             Keys.CALL_ID to uuid4(),
-            fn,
+            fn
         )
 
     /**

@@ -49,7 +49,7 @@ class MdcUtilsTest : StringSpec({
     // Bruker eksplisitt typesignatur i liste for å kunne bruke referanser til generiske funksjoner
     listOf<Row2<(() -> String) -> String, String>>(
         row(MdcUtils::withCallId, navn(MdcUtils::withCallId)),
-        row(MdcUtils::withCallIdAsUuid, navn(MdcUtils::withCallIdAsUuid)),
+        row(MdcUtils::withCallIdAsUuid, navn(MdcUtils::withCallIdAsUuid))
     )
         // Denne loopen kan ikke inneholde tester som involverer non-local returns pga. bruk av referanser
         .forEach { (withCallIdFnToTest, nameFnToTest) ->

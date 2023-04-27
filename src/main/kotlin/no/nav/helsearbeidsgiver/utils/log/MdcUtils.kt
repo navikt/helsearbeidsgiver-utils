@@ -17,33 +17,38 @@ object MdcUtils {
         MDC.get(Keys.CALL_ID)
             ?: newCallId()
 
-    inline fun <T> withCallId(fn: () -> T): T =
-        withLogField(
+    inline fun <T> withCallId(block: () -> T): T =
+        withLogFields(
             Keys.CALL_ID to newCallId(),
-            fn
+            block = block
         )
 
-    inline fun <T> withCallIdAsUuid(fn: () -> T): T =
-        withLogField(
+    inline fun <T> withCallIdAsUuid(block: () -> T): T =
+        withLogFields(
             Keys.CALL_ID to uuid4(),
-            fn
+            block = block
         )
 
-    /**
-     * Ikke bruk. Er kun `internal` pga. krav for bruk i `public inline`-funksjoner.
-     *
-     * Se alternativer under.
-     * @see withCallId
-     * @see withCallIdAsUuid
-     * */
-    @PublishedApi
-    internal inline fun <T> withLogField(logField: Pair<String, String>, fn: () -> T): T {
-        val (key, value) = logField
-        MDC.put(key, value)
+    inline fun <T> withLogFields(vararg logFields: Pair<String, String>, block: () -> T): T {
+        val backup = logFields.map { (key, _) ->
+            key to MDC.get(key)
+        }
+            .mapValuesNotNull()
+
+        logFields.forEach { (key, value) ->
+            MDC.put(key, value)
+        }
+
         return try {
-            fn()
+            block()
         } finally {
-            MDC.remove(key)
+            logFields.forEach { (key, _) ->
+                MDC.remove(key)
+            }
+
+            backup.forEach { (key, value) ->
+                MDC.put(key, value)
+            }
         }
     }
 
@@ -54,4 +59,14 @@ object MdcUtils {
     @PublishedApi
     internal fun uuid4(): String =
         UUID.randomUUID().toString()
+
+    @PublishedApi
+    internal fun List<Pair<String, String?>>.mapValuesNotNull(): List<Pair<String, String>> =
+        mapNotNull { (key, value) ->
+            if (value == null) {
+                null
+            } else {
+                key to value
+            }
+        }
 }

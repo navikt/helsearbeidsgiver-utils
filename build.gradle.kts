@@ -16,13 +16,6 @@ tasks {
         }
     }
 
-// Kreves for å få korrekt JVM-versjon. Fikses muligens i Kotlin 1.7.20. For mer info, se lenke:
-// https://youtrack.jetbrains.com/issue/KT-52474/An-attribute-orggradlejvmversion-isnt-set-correctly-while-updating-KGP-to-170#focus=Comments-27-6102307.0-0
-    withType<JavaCompile> {
-        targetCompatibility = "17"
-        sourceCompatibility = "17"
-    }
-
     test {
         useJUnitPlatform()
     }

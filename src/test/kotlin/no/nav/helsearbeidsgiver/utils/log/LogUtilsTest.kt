@@ -18,4 +18,8 @@ class LogUtilsTest : FunSpec({
 
         enKlasse.logger().name shouldBe enKlasse.javaClass.name
     }
+
+    test("sikkerLogger logger til tjenestekall") {
+        sikkerLogger().name shouldBe "tjenestekall"
+    }
 })

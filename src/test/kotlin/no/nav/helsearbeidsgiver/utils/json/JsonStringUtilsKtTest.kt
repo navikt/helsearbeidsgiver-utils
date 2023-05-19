@@ -18,9 +18,8 @@ class JsonStringUtilsKtTest : FunSpec({
             }
         """
 
-        val jsonUtenWhitespace = """{"en streng med mellomrom":"det er leet","tall":1337,"bool":true,"liste":["med mellomrom","uten","med igjen","ikke"],
-            |"objekt":{"det er leet":"1337","speak":"5p34k"}}
-        """.trimMargin()
+        val jsonUtenWhitespace = """{"en streng med mellomrom":"det er leet","tall":1337,"bool":true,"liste":["med mellomrom","uten","med igjen","ikke"],""" +
+            """"objekt":{"det er leet":"1337","speak":"5p34k"}}"""
 
         jsonMedWhitespace.removeJsonWhitespace() shouldBe jsonUtenWhitespace
     }

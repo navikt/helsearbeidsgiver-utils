@@ -8,6 +8,5 @@ pluginManagement {
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
         id("org.jlleitschuh.gradle.ktlint") version ktlintVersion
-        id("maven-publish")
     }
 }

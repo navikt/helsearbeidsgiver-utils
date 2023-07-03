@@ -8,6 +8,7 @@ plugins {
     kotlin("plugin.serialization")
     id("org.jlleitschuh.gradle.ktlint")
     id("maven-publish")
+    id("java-test-fixtures")
 }
 
 tasks {
@@ -43,19 +44,23 @@ publishing {
 }
 
 dependencies {
-    val coroutinesVersion: String by project
     val kotestVersion: String by project
+    val kotlinCoroutinesVersion: String by project
     val kotlinxSerializationVersion: String by project
     val logbackVersion: String by project
+    val mockkVersion: String by project
     val slf4jVersion: String by project
 
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
     api("org.slf4j:slf4j-api:$slf4jVersion")
 
+    testFixturesImplementation("io.mockk:mockk:$mockkVersion")
+    testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
+
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
 
     testRuntimeOnly("ch.qos.logback:logback-classic:$logbackVersion")
 }

@@ -1,5 +1,6 @@
 package no.nav.helsearbeidsgiver.utils.json.serializer
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
@@ -8,6 +9,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonElement
 
+@OptIn(ExperimentalSerializationApi::class)
 object GenericObjectSerializer : KSerializer<Map<String, JsonElement>> {
     private val delegateSerializer = MapSerializer(
         String.serializer(),

@@ -6,7 +6,8 @@ import io.kotest.matchers.shouldBe
 import kotlinx.serialization.SerializationException
 import no.nav.helsearbeidsgiver.utils.json.fromJson
 import no.nav.helsearbeidsgiver.utils.json.toJsonStr
-import java.time.LocalDate
+import no.nav.helsearbeidsgiver.utils.test.date.februar
+import no.nav.helsearbeidsgiver.utils.test.date.juni
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.YearMonth
@@ -38,7 +39,7 @@ class DateSerializersKtTest : FunSpec({
 
     context("LocalDateSerializer") {
         test("serialiserer korrekt") {
-            val dato = LocalDate.of(1815, Month.FEBRUARY, 12)
+            val dato = 12.februar(1815)
 
             val json = dato.toJsonStr(LocalDateSerializer)
 
@@ -50,7 +51,7 @@ class DateSerializersKtTest : FunSpec({
 
             val dato = json.fromJson(LocalDateSerializer)
 
-            dato shouldBe LocalDate.of(1915, Month.JUNE, 22)
+            dato shouldBe 22.juni(1915)
         }
 
         test("gir SerializationException ved deserialiseringsfeil") {

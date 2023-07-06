@@ -5,8 +5,9 @@ import io.kotest.matchers.shouldBe
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
 import no.nav.helsearbeidsgiver.utils.json.serializer.set
-import java.time.LocalDate
-import java.time.LocalDateTime
+import no.nav.helsearbeidsgiver.utils.test.date.januar
+import no.nav.helsearbeidsgiver.utils.test.date.juli
+import no.nav.helsearbeidsgiver.utils.test.date.kl
 import java.time.Month
 import java.time.YearMonth
 import java.util.UUID
@@ -125,7 +126,7 @@ class SerializationUtilsKtTest : FunSpec({
         }
 
         test("serialiserer korrekt fra dato til JsonElement") {
-            val dato = LocalDate.of(1876, Month.JANUARY, 28)
+            val dato = 28.januar(1876)
 
             val json = dato.toJson().toString()
 
@@ -133,7 +134,7 @@ class SerializationUtilsKtTest : FunSpec({
         }
 
         test("serialiserer korrekt fra tidspunkt (LocalDateTime) til JsonElement") {
-            val tidspunkt = LocalDateTime.of(1777, Month.JULY, 3, 5, 47, 57, 789_012_345)
+            val tidspunkt = 3.juli(1777).kl(5, 47, 57, 789_012_345)
 
             val json = tidspunkt.toJson().toString()
 

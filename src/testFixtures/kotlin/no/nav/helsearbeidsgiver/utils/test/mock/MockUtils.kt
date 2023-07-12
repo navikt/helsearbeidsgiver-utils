@@ -8,6 +8,14 @@ import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import kotlinx.coroutines.runBlocking
 import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+
+fun <T> mockStatic(fn: KFunction<*>, block: suspend () -> T): T =
+    runWithSetup(
+        block = block,
+        setup = { mockkStatic(fn) },
+        teardown = { unmockkStatic(fn) }
+    )
 
 fun <T> mockStatic(klass: KClass<*>, block: suspend () -> T): T =
     runWithSetup(

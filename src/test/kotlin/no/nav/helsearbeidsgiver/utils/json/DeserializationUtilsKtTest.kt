@@ -8,6 +8,7 @@ import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import no.nav.helsearbeidsgiver.utils.test.json.removeJsonWhitespace
 
 class DeserializationUtilsKtTest : FunSpec({
 

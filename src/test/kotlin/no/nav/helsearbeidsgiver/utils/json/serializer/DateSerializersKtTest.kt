@@ -10,7 +10,9 @@ import no.nav.helsearbeidsgiver.utils.test.date.februar
 import no.nav.helsearbeidsgiver.utils.test.date.juni
 import java.time.LocalDateTime
 import java.time.Month
+import java.time.OffsetDateTime
 import java.time.YearMonth
+import java.time.ZoneOffset
 
 class DateSerializersKtTest : FunSpec({
     context("YearMonthSerializer") {
@@ -81,6 +83,32 @@ class DateSerializersKtTest : FunSpec({
         test("gir SerializationException ved deserialiseringsfeil") {
             shouldThrow<SerializationException> {
                 "ikke et tidspunkt".fromJson(LocalDateTimeSerializer)
+            }
+        }
+    }
+
+    context("OffsetDateTimeSerializer") {
+        val sevenHourOffset = ZoneOffset.ofHours(7)
+
+        test("serialiserer korrekt") {
+            val tidspunkt = OffsetDateTime.of(1907, 8, 12, 12, 23, 34, 555_555_555, sevenHourOffset)
+
+            val json = tidspunkt.toJsonStr(OffsetDateTimeSerializer)
+
+            json shouldBe "\"1907-08-12T12:23:34.555555555+07:00\""
+        }
+
+        test("deserialiserer korrekt") {
+            val json = "\"1927-05-13T22:33:44.666666666+07:00\""
+
+            val tidspunkt = json.fromJson(OffsetDateTimeSerializer)
+
+            tidspunkt shouldBe OffsetDateTime.of(1927, 5, 13, 22, 33, 44, 666_666_666, sevenHourOffset)
+        }
+
+        test("gir SerializationException ved deserialiseringsfeil") {
+            shouldThrow<SerializationException> {
+                "ikke et tidspunkt".fromJson(OffsetDateTimeSerializer)
             }
         }
     }

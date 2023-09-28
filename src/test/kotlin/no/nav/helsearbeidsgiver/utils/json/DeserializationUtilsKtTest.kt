@@ -31,7 +31,7 @@ class DeserializationUtilsKtTest : FunSpec({
                 age = 111
             )
 
-            val actualObject = jsonIgnoreUnknown.decodeFromJsonElement(Hobbit.serializer(), bilboJson)
+            val actualObject = jsonConfig.decodeFromJsonElement(Hobbit.serializer(), bilboJson)
 
             actualObject shouldBe expectedObject
         }

@@ -1,5 +1,6 @@
 package no.nav.helsearbeidsgiver.utils.json
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.json.Json
@@ -7,15 +8,17 @@ import kotlinx.serialization.json.JsonElement
 import no.nav.helsearbeidsgiver.utils.collection.mapKeysNotNull
 import no.nav.helsearbeidsgiver.utils.json.serializer.GenericObjectSerializer
 
-val jsonIgnoreUnknown = Json {
+@OptIn(ExperimentalSerializationApi::class)
+val jsonConfig = Json {
     ignoreUnknownKeys = true
+    decodeEnumsCaseInsensitive = true
 }
 
 fun String.parseJson(): JsonElement =
     Json.parseToJsonElement(this)
 
 fun <T> JsonElement.fromJson(serializer: KSerializer<T>): T =
-    jsonIgnoreUnknown.decodeFromJsonElement(serializer, this)
+    jsonConfig.decodeFromJsonElement(serializer, this)
 
 fun <T> String.fromJson(serializer: KSerializer<T>): T =
     parseJson().fromJson(serializer)

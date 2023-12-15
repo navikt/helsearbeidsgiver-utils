@@ -2,6 +2,7 @@ package no.nav.helsearbeidsgiver.utils.json
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
+import no.nav.helsearbeidsgiver.utils.test.json.removeJsonWhitespace
 
 class JsonStringUtilsKtTest : FunSpec({
     test("'String.removeJsonWhitespace(): String' fjerner whitespace fra json uten å endre innholdet") {

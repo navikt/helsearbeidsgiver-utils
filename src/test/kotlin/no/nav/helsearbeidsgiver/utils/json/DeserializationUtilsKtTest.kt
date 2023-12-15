@@ -8,6 +8,7 @@ import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import no.nav.helsearbeidsgiver.utils.test.json.removeJsonWhitespace
 
 class DeserializationUtilsKtTest : FunSpec({
 
@@ -30,7 +31,7 @@ class DeserializationUtilsKtTest : FunSpec({
                 age = 111
             )
 
-            val actualObject = jsonIgnoreUnknown.decodeFromJsonElement(Hobbit.serializer(), bilboJson)
+            val actualObject = jsonConfig.decodeFromJsonElement(Hobbit.serializer(), bilboJson)
 
             actualObject shouldBe expectedObject
         }

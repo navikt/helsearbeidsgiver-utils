@@ -8,6 +8,7 @@ import no.nav.helsearbeidsgiver.utils.json.serializer.set
 import no.nav.helsearbeidsgiver.utils.test.date.januar
 import no.nav.helsearbeidsgiver.utils.test.date.juli
 import no.nav.helsearbeidsgiver.utils.test.date.kl
+import no.nav.helsearbeidsgiver.utils.test.json.removeJsonWhitespace
 import java.time.Month
 import java.time.YearMonth
 import java.util.UUID

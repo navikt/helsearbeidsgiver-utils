@@ -4,17 +4,32 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 
 class PipeUtilsKtTest : FunSpec({
-    test("orDefault returns receiver if non-null or default otherwise") {
-        val nullableStringThatIsNull: String? = null
+    context("orDefault") {
+        test("'orDefault(default)' returns receiver if non-null or default otherwise") {
+            val nullableStringThatIsNull: String? = null
 
-        @Suppress("RedundantNullableReturnType")
-        val nullableStringThatIsNotNull: String? = "I may be null. Who knows?"
+            @Suppress("RedundantNullableReturnType")
+            val nullableStringThatIsNotNull: String? = "I may be null. Who knows?"
 
-        @Suppress("RedundantExplicitType")
-        val nonNullableString: String = "I am definitely not null!"
+            @Suppress("RedundantExplicitType")
+            val nonNullableString: String = "I am definitely not null!"
 
-        nullableStringThatIsNull.orDefault(nonNullableString) shouldBe nonNullableString
-        nullableStringThatIsNotNull.orDefault(nonNullableString) shouldBe nullableStringThatIsNotNull
+            nullableStringThatIsNull.orDefault(nonNullableString) shouldBe nonNullableString
+            nullableStringThatIsNotNull.orDefault(nonNullableString) shouldBe nullableStringThatIsNotNull
+        }
+
+        test("'orDefault(block)' returns receiver if non-null or block() otherwise") {
+            val nullableIntThatIsNull: Int? = null
+
+            @Suppress("RedundantNullableReturnType")
+            val nullableIntThatIsNotNull: Int? = -42
+
+            @Suppress("RedundantExplicitType")
+            val nonNullableInt: Int = 1337
+
+            nullableIntThatIsNull.orDefault { nonNullableInt } shouldBe nonNullableInt
+            nullableIntThatIsNotNull.orDefault { nonNullableInt } shouldBe nullableIntThatIsNotNull
+        }
     }
 
     test("ifTrue executes block if receiver is 'true'") {

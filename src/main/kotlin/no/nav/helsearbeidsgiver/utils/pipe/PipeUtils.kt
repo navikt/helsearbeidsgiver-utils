@@ -3,6 +3,9 @@ package no.nav.helsearbeidsgiver.utils.pipe
 fun <T : Any> T?.orDefault(default: T): T =
     this ?: default
 
+fun <T : Any> T?.orDefault(block: () -> T): T =
+    this ?: block()
+
 fun Boolean.ifTrue(block: () -> Unit): Boolean =
     also { if (this) block() }
 

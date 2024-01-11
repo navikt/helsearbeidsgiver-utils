@@ -57,7 +57,7 @@ class SjekksumTest : FunSpec({
                     siffer = listOf(7, 5, 6, 5, 1, 2, 1),
                     sifferVekter = listOf(0, 6, 0, 9, 9, 2, 0),
                     forventetSjekksum = 0
-                ),
+                )
             )
         ) {
             sjekksum(it.siffer, it.sifferVekter) shouldBe it.forventetSjekksum

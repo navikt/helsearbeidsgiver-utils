@@ -12,7 +12,6 @@ private val fnrRgx = Regex(
 private val sifferVekter1 = listOf(3, 7, 6, 1, 8, 9, 4, 5, 2)
 private val sifferVekter2 = listOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2)
 
-
 @Serializable
 @JvmInline
 value class Fnr(val verdi: String) {
@@ -32,7 +31,7 @@ value class Fnr(val verdi: String) {
                 val sjekksum1 = sjekksum(fnrSiffer, sifferVekter1)
                 val sjekksum2 = sjekksum(fnrSiffer, sifferVekter2)
 
-                10 !in listOf(sjekksum1, sjekksum2)  &&
+                10 !in listOf(sjekksum1, sjekksum2) &&
                     sjekksum1 == fnrSiffer[9] &&
                     sjekksum2 == fnrSiffer[10]
             } else {

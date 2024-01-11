@@ -16,7 +16,7 @@ private val sifferVekter2 = listOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2)
 @JvmInline
 value class Fnr(val verdi: String) {
     init {
-        require(erGyldig(verdi))
+        require(erGyldig(verdi)) { "Ugyldig fødsels- eller d-nummer." }
     }
 
     override fun toString(): String =

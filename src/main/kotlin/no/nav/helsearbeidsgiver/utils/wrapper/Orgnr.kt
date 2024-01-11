@@ -11,7 +11,7 @@ private val sifferVekter = listOf(3, 2, 7, 6, 5, 4, 3, 2)
 @JvmInline
 value class Orgnr(val verdi: String) {
     init {
-        require(erGyldig(verdi))
+        require(erGyldig(verdi)) { "Ugyldig organisasjonsnummer." }
     }
 
     override fun toString(): String =

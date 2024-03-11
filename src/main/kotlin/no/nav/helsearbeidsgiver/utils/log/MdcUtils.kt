@@ -29,7 +29,7 @@ object MdcUtils {
             block = block
         )
 
-    inline fun <T> withLogFields(vararg logFields: Pair<String, String>, block: () -> T): T {
+    inline fun <T> withLogFields(vararg logFields: Pair<String, String?>, block: () -> T): T {
         val backup = logFields.map { (key, _) ->
             key to MDC.get(key)
         }

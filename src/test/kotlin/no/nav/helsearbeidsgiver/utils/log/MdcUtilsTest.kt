@@ -173,6 +173,22 @@ class MdcUtilsTest : FunSpec({
 
             MDC.get("black").shouldBeNull()
         }
+
+        test("logger ikke null-verdier") {
+            val fnWithNonLocalReturn = fun(): String =
+                MdcUtils.withLogFields(
+                    "empty" to null,
+                    "non-empty" to "not null"
+                ) {
+                    MDC.get("empty") shouldBe null
+                    MDC.get("non-empty") shouldBe "not null"
+                }
+
+            fnWithNonLocalReturn()
+
+            MDC.get("empty").shouldBeNull()
+            MDC.get("non-empty").shouldBeNull()
+        }
     }
 })
 

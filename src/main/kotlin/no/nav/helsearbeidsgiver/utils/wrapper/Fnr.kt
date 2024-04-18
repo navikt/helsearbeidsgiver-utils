@@ -9,8 +9,8 @@ private val fnrRgx = Regex(
         "\\d{7}" // resten er tall
 )
 
-private val sifferVekter1 = listOf(3, 7, 6, 1, 8, 9, 4, 5, 2)
-private val sifferVekter2 = listOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2)
+internal val fnrSifferVekter1 = listOf(3, 7, 6, 1, 8, 9, 4, 5, 2)
+internal val fnrSifferVekter2 = listOf(5, 4, 3, 2, 7, 6, 5, 4, 3, 2)
 
 @Serializable
 @JvmInline
@@ -23,13 +23,14 @@ value class Fnr(val verdi: String) {
         verdi
 
     companion object {
+        // TODO bruk bedre lenke fra simba
         /** Les [her](https://no.wikipedia.org/wiki/F%C3%B8dselsnummer) for forklaring av regler. */
         fun erGyldig(fnr: String): Boolean =
             if (fnr.matches(fnrRgx)) {
                 val fnrSiffer = fnr.toList().map(Char::digitToInt)
 
-                val sjekksum1 = sjekksum(fnrSiffer, sifferVekter1)
-                val sjekksum2 = sjekksum(fnrSiffer, sifferVekter2)
+                val sjekksum1 = sjekksum(fnrSiffer, fnrSifferVekter1)
+                val sjekksum2 = sjekksum(fnrSiffer, fnrSifferVekter2)
 
                 10 !in listOf(sjekksum1, sjekksum2) &&
                     sjekksum1 == fnrSiffer[9] &&

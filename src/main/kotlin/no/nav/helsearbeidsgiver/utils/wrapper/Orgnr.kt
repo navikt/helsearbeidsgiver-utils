@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 /** Sjekker at streng er riktig lengde og kun består av siffer. */
 private val orgnrRgx = Regex("\\d{9}")
 
-private val sifferVekter = listOf(3, 2, 7, 6, 5, 4, 3, 2)
+internal val orgnrSifferVekter = listOf(3, 2, 7, 6, 5, 4, 3, 2)
 
 @Serializable
 @JvmInline
@@ -23,7 +23,7 @@ value class Orgnr(val verdi: String) {
             if (orgnr.matches(orgnrRgx)) {
                 val orgnrSiffer = orgnr.toList().map(Char::digitToInt)
 
-                val sjekksum = sjekksum(orgnrSiffer, sifferVekter)
+                val sjekksum = sjekksum(orgnrSiffer, orgnrSifferVekter)
 
                 sjekksum != 10 &&
                     sjekksum == orgnrSiffer.last()

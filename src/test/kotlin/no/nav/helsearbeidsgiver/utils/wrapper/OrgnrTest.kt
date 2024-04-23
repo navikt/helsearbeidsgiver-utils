@@ -5,6 +5,7 @@ import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
+import no.nav.helsearbeidsgiver.utils.test.wrapper.genererGyldig
 
 class OrgnrTest : FunSpec({
 
@@ -53,6 +54,14 @@ class OrgnrTest : FunSpec({
     test("toString gir wrappet verdi") {
         Orgnr("123456785").let {
             it.toString() shouldBe it.verdi
+        }
+    }
+
+    test(Orgnr::genererGyldig.name) {
+        repeat(1000) {
+            shouldNotThrowAny {
+                Orgnr.genererGyldig()
+            }
         }
     }
 })

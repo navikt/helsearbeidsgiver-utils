@@ -4,7 +4,10 @@ import io.kotest.assertions.throwables.shouldNotThrowAny
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
+import io.kotest.matchers.ints.shouldBeInRange
 import io.kotest.matchers.shouldBe
+import no.nav.helsearbeidsgiver.utils.test.wrapper.TestPerson
+import no.nav.helsearbeidsgiver.utils.test.wrapper.genererGyldig
 
 class FnrTest : FunSpec({
 
@@ -91,4 +94,62 @@ class FnrTest : FunSpec({
             it.toString() shouldBe it.verdi
         }
     }
+
+    context(Fnr::genererGyldig.name) {
+
+        withData(
+            mapOf(
+                "fnr" to TestFnrData(
+                    fnrGenerator = { Fnr.genererGyldig() },
+                    forventetDagFoersteSiffer = 0..3,
+                    forventetMaanedFoersteSiffer = 0..1
+                ),
+
+                "fnr for NAV-testperson" to TestFnrData(
+                    fnrGenerator = { Fnr.genererGyldig(forTestPerson = TestPerson.NAV) },
+                    forventetDagFoersteSiffer = 0..3,
+                    forventetMaanedFoersteSiffer = 4..5
+                ),
+
+                "fnr for TestNorge-testperson" to TestFnrData(
+                    fnrGenerator = { Fnr.genererGyldig(forTestPerson = TestPerson.TEST_NORGE) },
+                    forventetDagFoersteSiffer = 0..3,
+                    forventetMaanedFoersteSiffer = 8..9
+                ),
+
+                "dnr" to TestFnrData(
+                    fnrGenerator = { Fnr.genererGyldig(somDnr = true) },
+                    forventetDagFoersteSiffer = 4..7,
+                    forventetMaanedFoersteSiffer = 0..1
+                ),
+
+                "dnr for NAV-testperson" to TestFnrData(
+                    fnrGenerator = { Fnr.genererGyldig(somDnr = true, forTestPerson = TestPerson.NAV) },
+                    forventetDagFoersteSiffer = 4..7,
+                    forventetMaanedFoersteSiffer = 4..5
+                ),
+
+                "dnr for TestNorge-testperson" to TestFnrData(
+                    fnrGenerator = { Fnr.genererGyldig(somDnr = true, forTestPerson = TestPerson.TEST_NORGE) },
+                    forventetDagFoersteSiffer = 4..7,
+                    forventetMaanedFoersteSiffer = 8..9
+                )
+            )
+        ) { testData ->
+            repeat(1000) {
+                val fnr = shouldNotThrowAny {
+                    testData.fnrGenerator()
+                }
+
+                fnr.verdi[0].digitToInt() shouldBeInRange testData.forventetDagFoersteSiffer
+                fnr.verdi[2].digitToInt() shouldBeInRange testData.forventetMaanedFoersteSiffer
+            }
+        }
+    }
 })
+
+private class TestFnrData(
+    val fnrGenerator: () -> Fnr,
+    val forventetDagFoersteSiffer: IntRange,
+    val forventetMaanedFoersteSiffer: IntRange
+)

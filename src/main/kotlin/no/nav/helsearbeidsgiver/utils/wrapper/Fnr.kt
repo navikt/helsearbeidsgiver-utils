@@ -23,8 +23,7 @@ value class Fnr(val verdi: String) {
         verdi
 
     companion object {
-        // TODO bruk bedre lenke fra simba
-        /** Les [her](https://no.wikipedia.org/wiki/F%C3%B8dselsnummer) for forklaring av regler. */
+        /** Les [her](https://lovdata.no/dokument/SF/forskrift/2017-07-14-1201/KAPITTEL_2#%C2%A72-2-1) for forklaring av regler. */
         fun erGyldig(fnr: String): Boolean =
             if (fnr.matches(fnrRgx)) {
                 val fnrSiffer = fnr.toList().map(Char::digitToInt)

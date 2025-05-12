@@ -4,5 +4,5 @@ import java.util.UUID
 
 object UuidSerializer : AsStringSerializer<UUID>(
     serialName = "helsearbeidsgiver.kotlinx.UuidSerializer",
-    parse = UUID::fromString
+    parse = UUID::fromString,
 )

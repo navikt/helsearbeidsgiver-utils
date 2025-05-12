@@ -15,50 +15,52 @@ import io.kotest.matchers.string.shouldMatch
 import org.slf4j.MDC
 import kotlin.reflect.KCallable
 
-class MdcUtilsTest : FunSpec({
+class MdcUtilsTest :
+    FunSpec({
 
-    beforeEach {
-        MDC.clear()
-    }
+        beforeEach {
+            MDC.clear()
+        }
 
-    context(MdcUtils::getCallId.name) {
-        test("henter callId hvis finnes") {
-            MdcUtils.withCallIdAsUuid {
-                // callId er på MDC, så samme callId hentes hver gang
-                MdcUtils.getCallId() shouldBe MdcUtils.getCallId()
+        context(MdcUtils::getCallId.name) {
+            test("henter callId hvis finnes") {
+                MdcUtils.withCallIdAsUuid {
+                    // callId er på MDC, så samme callId hentes hver gang
+                    MdcUtils.getCallId() shouldBe MdcUtils.getCallId()
+                }
+            }
+
+            test("lager ny callId hvis ingen finnes") {
+                // callId er ikke i MDC, så ny callId hentes/lages hver gang
+                MdcUtils.getCallId() shouldNotBe MdcUtils.getCallId()
             }
         }
 
-        test("lager ny callId hvis ingen finnes") {
-            // callId er ikke i MDC, så ny callId hentes/lages hver gang
-            MdcUtils.getCallId() shouldNotBe MdcUtils.getCallId()
-        }
-    }
-
-    context(navn(MdcUtils::withCallId)) {
-        test("bruker egendefinert ID som callId") {
-            MdcUtils.withCallId {
-                MdcUtils.getCallId()
-                    .shouldMatch("CallId_\\d+_\\d+")
+        context(navn(MdcUtils::withCallId)) {
+            test("bruker egendefinert ID som callId") {
+                MdcUtils.withCallId {
+                    MdcUtils
+                        .getCallId()
+                        .shouldMatch("CallId_\\d+_\\d+")
+                }
             }
         }
-    }
 
-    context(navn(MdcUtils::withCallIdAsUuid)) {
-        test("bruker uuid4 som callId") {
-            MdcUtils.withCallIdAsUuid {
-                MdcUtils.getCallId()
-                    .shouldBeUUID(version = UUIDVersion.V4)
+        context(navn(MdcUtils::withCallIdAsUuid)) {
+            test("bruker uuid4 som callId") {
+                MdcUtils.withCallIdAsUuid {
+                    MdcUtils
+                        .getCallId()
+                        .shouldBeUUID(version = UUIDVersion.V4)
+                }
             }
         }
-    }
 
-    // Bruker eksplisitt typesignatur i liste for å kunne bruke referanser til generiske funksjoner
-    listOf<Row2<(() -> String) -> String, String>>(
-        row(MdcUtils::withCallId, navn(MdcUtils::withCallId)),
-        row(MdcUtils::withCallIdAsUuid, navn(MdcUtils::withCallIdAsUuid))
-    )
-        .forEach { (withCallIdFnToTest, nameFnToTest) ->
+        // Bruker eksplisitt typesignatur i liste for å kunne bruke referanser til generiske funksjoner
+        listOf<Row2<(() -> String) -> String, String>>(
+            row(MdcUtils::withCallId, navn(MdcUtils::withCallId)),
+            row(MdcUtils::withCallIdAsUuid, navn(MdcUtils::withCallIdAsUuid)),
+        ).forEach { (withCallIdFnToTest, nameFnToTest) ->
             context(nameFnToTest) {
                 test("callId legges til MDC") {
                     withCallIdFnToTest {
@@ -71,10 +73,11 @@ class MdcUtilsTest : FunSpec({
                     // callId er ikke i MDC, så ny callId hentes/lages hver gang
                     val callIdBeforeWrapper = MdcUtils.getCallId()
 
-                    val callIdInWrapper = withCallIdFnToTest {
-                        // callId er på MDC, så samme callId hentes hver gang
-                        MdcUtils.getCallId()
-                    }
+                    val callIdInWrapper =
+                        withCallIdFnToTest {
+                            // callId er på MDC, så samme callId hentes hver gang
+                            MdcUtils.getCallId()
+                        }
 
                     // callId er ikke lenger i MDC, så ny callId hentes/lages hver gang
                     val callIdAfterWrapper = MdcUtils.getCallId()
@@ -86,96 +89,96 @@ class MdcUtilsTest : FunSpec({
             }
         }
 
-    context(navn(MdcUtils::withLogFields)) {
-        test("loggfelter legges til og fjernes") {
-            MDC.get("yellow").shouldBeNull()
-            MDC.get("red").shouldBeNull()
-
-            MdcUtils.withLogFields(
-                "yellow" to "submarine",
-                "red" to "flag"
-            ) {
-                MDC.get("yellow") shouldBe "submarine"
-                MDC.get("red") shouldBe "flag"
-            }
-
-            MDC.get("yellow").shouldBeNull()
-            MDC.get("red").shouldBeNull()
-        }
-
-        test("loggfelter som legges til senere overskriver tidligere loggfelter midlertidig") {
-            MDC.get("blue").shouldBeNull()
-
-            MdcUtils.withLogFields(
-                "blue" to "monday"
-            ) {
-                MDC.get("blue") shouldBe "monday"
+        context(navn(MdcUtils::withLogFields)) {
+            test("loggfelter legges til og fjernes") {
+                MDC.get("yellow").shouldBeNull()
+                MDC.get("red").shouldBeNull()
 
                 MdcUtils.withLogFields(
-                    "blue" to "orchid"
+                    "yellow" to "submarine",
+                    "red" to "flag",
                 ) {
-                    MDC.get("blue") shouldBe "orchid"
+                    MDC.get("yellow") shouldBe "submarine"
+                    MDC.get("red") shouldBe "flag"
                 }
 
-                MDC.get("blue") shouldBe "monday"
+                MDC.get("yellow").shouldBeNull()
+                MDC.get("red").shouldBeNull()
             }
 
-            MDC.get("blue").shouldBeNull()
-        }
+            test("loggfelter som legges til senere overskriver tidligere loggfelter midlertidig") {
+                MDC.get("blue").shouldBeNull()
 
-        test("returnerer korrekt verdi") {
-            val expected = "314"
+                MdcUtils.withLogFields(
+                    "blue" to "monday",
+                ) {
+                    MDC.get("blue") shouldBe "monday"
 
-            val actual = MdcUtils.withLogFields {
-                expected
+                    MdcUtils.withLogFields(
+                        "blue" to "orchid",
+                    ) {
+                        MDC.get("blue") shouldBe "orchid"
+                    }
+
+                    MDC.get("blue") shouldBe "monday"
+                }
+
+                MDC.get("blue").shouldBeNull()
             }
 
-            actual shouldBe expected
-        }
+            test("returnerer korrekt verdi") {
+                val expected = "314"
 
-        test("returnerer korrekt verdi ved non-local return") {
-            val expected = "spanish inquisition"
+                val actual =
+                    MdcUtils.withLogFields {
+                        expected
+                    }
 
-            val actualFn = fun(): String =
-                MdcUtils.withLogFields(
-                    "green" to "light"
-                ) {
-                    MDC.get("green") shouldBe "light"
-                    return expected
-                }
-
-            actualFn() shouldBe expected
-        }
-
-        test("fjerner loggfelter ved non-local return") {
-            val fnWithNonLocalReturn = fun(): String =
-                MdcUtils.withLogFields(
-                    "green" to "light"
-                ) {
-                    MDC.get("green") shouldBe "light"
-                    return "42"
-                }
-
-            fnWithNonLocalReturn()
-
-            MDC.get("green").shouldBeNull()
-        }
-
-        test("fjerner loggfelter ved exception") {
-            shouldThrowExactly<NullPointerException> {
-                MdcUtils.withLogFields(
-                    "black" to "betty"
-                ) {
-                    MDC.get("black") shouldBe "betty"
-                    throw NullPointerException()
-                }
+                actual shouldBe expected
             }
 
-            MDC.get("black").shouldBeNull()
+            test("returnerer korrekt verdi ved non-local return") {
+                val expected = "spanish inquisition"
+
+                val actualFn = fun(): String =
+                    MdcUtils.withLogFields(
+                        "green" to "light",
+                    ) {
+                        MDC.get("green") shouldBe "light"
+                        return expected
+                    }
+
+                actualFn() shouldBe expected
+            }
+
+            test("fjerner loggfelter ved non-local return") {
+                val fnWithNonLocalReturn = fun(): String =
+                    MdcUtils.withLogFields(
+                        "green" to "light",
+                    ) {
+                        MDC.get("green") shouldBe "light"
+                        return "42"
+                    }
+
+                fnWithNonLocalReturn()
+
+                MDC.get("green").shouldBeNull()
+            }
+
+            test("fjerner loggfelter ved exception") {
+                shouldThrowExactly<NullPointerException> {
+                    MdcUtils.withLogFields(
+                        "black" to "betty",
+                    ) {
+                        MDC.get("black") shouldBe "betty"
+                        throw NullPointerException()
+                    }
+                }
+
+                MDC.get("black").shouldBeNull()
+            }
         }
-    }
-})
+    })
 
 // Hent navn fra funksjon med generisk output (castes til String via parameter)
-private fun navn(kCallable: KCallable<String>): String =
-    kCallable.name
+private fun navn(kCallable: KCallable<String>): String = kCallable.name

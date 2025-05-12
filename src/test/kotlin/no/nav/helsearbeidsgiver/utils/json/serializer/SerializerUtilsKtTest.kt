@@ -7,43 +7,44 @@ import kotlinx.serialization.builtins.serializer
 import no.nav.helsearbeidsgiver.utils.json.fromJson
 import no.nav.helsearbeidsgiver.utils.json.toJsonStr
 
-class SerializerUtilsKtTest : FunSpec({
+class SerializerUtilsKtTest :
+    FunSpec({
 
-    context("list") {
-        val nullableInts = listOf(1, 2, null)
-        val nullableIntsJson = "[1,2,null]"
+        context("list") {
+            val nullableInts = listOf(1, 2, null)
+            val nullableIntsJson = "[1,2,null]"
 
-        val testSerializer = Int.serializer().nullable.list()
+            val testSerializer = Int.serializer().nullable.list()
 
-        test("serialiserer korrekt") {
-            val json = nullableInts.toJsonStr(testSerializer)
+            test("serialiserer korrekt") {
+                val json = nullableInts.toJsonStr(testSerializer)
 
-            json shouldBe nullableIntsJson
+                json shouldBe nullableIntsJson
+            }
+
+            test("deserialiserer korrekt") {
+                val numbers = nullableIntsJson.fromJson(testSerializer)
+
+                numbers shouldBe nullableInts
+            }
         }
 
-        test("deserialiserer korrekt") {
-            val numbers = nullableIntsJson.fromJson(testSerializer)
+        context("set") {
+            val nullableDoubleSet = setOf(1.0, 2.0, 2.0, null)
+            val nullableDoubleSetJson = "[1.0,2.0,null]"
 
-            numbers shouldBe nullableInts
+            val testSerializer = Double.serializer().nullable.set()
+
+            test("serialiserer korrekt") {
+                val json = nullableDoubleSet.toJsonStr(testSerializer)
+
+                json shouldBe nullableDoubleSetJson
+            }
+
+            test("deserialiserer korrekt") {
+                val numberSet = nullableDoubleSetJson.fromJson(testSerializer)
+
+                numberSet shouldBe nullableDoubleSet
+            }
         }
-    }
-
-    context("set") {
-        val nullableDoubleSet = setOf(1.0, 2.0, 2.0, null)
-        val nullableDoubleSetJson = "[1.0,2.0,null]"
-
-        val testSerializer = Double.serializer().nullable.set()
-
-        test("serialiserer korrekt") {
-            val json = nullableDoubleSet.toJsonStr(testSerializer)
-
-            json shouldBe nullableDoubleSetJson
-        }
-
-        test("deserialiserer korrekt") {
-            val numberSet = nullableDoubleSetJson.fromJson(testSerializer)
-
-            numberSet shouldBe nullableDoubleSet
-        }
-    }
-})
+    })

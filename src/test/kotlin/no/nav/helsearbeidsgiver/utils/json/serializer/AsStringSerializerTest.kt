@@ -12,43 +12,45 @@ private object TestSerializer : AsStringSerializer<ChaosGod>(
     parse = {
         val (name, domain) = it.split(" rules ")
         ChaosGod(name, domain)
-    }
+    },
 )
 
-class AsStringSerializerTest : FunSpec({
-    test("serialiserer korrekt") {
-        val nurgle = ChaosGod(
-            name = "Nurgle",
-            domain = "disease and decay"
-        )
+class AsStringSerializerTest :
+    FunSpec({
+        test("serialiserer korrekt") {
+            val nurgle =
+                ChaosGod(
+                    name = "Nurgle",
+                    domain = "disease and decay",
+                )
 
-        val json = nurgle.toJsonStr(TestSerializer)
+            val json = nurgle.toJsonStr(TestSerializer)
 
-        json shouldBe "\"Nurgle rules disease and decay\""
-    }
-
-    test("deserialiserer korrekt") {
-        val json = "\"Khorne rules blood and rage\""
-
-        val khorne = json.fromJson(TestSerializer)
-
-        khorne shouldBe ChaosGod(
-            name = "Khorne",
-            domain = "blood and rage"
-        )
-    }
-
-    test("gir SerializationException ved deserialiseringsfeil") {
-        shouldThrow<SerializationException> {
-            "ikke en chaos god".fromJson(TestSerializer)
+            json shouldBe "\"Nurgle rules disease and decay\""
         }
-    }
-})
+
+        test("deserialiserer korrekt") {
+            val json = "\"Khorne rules blood and rage\""
+
+            val khorne = json.fromJson(TestSerializer)
+
+            khorne shouldBe
+                ChaosGod(
+                    name = "Khorne",
+                    domain = "blood and rage",
+                )
+        }
+
+        test("gir SerializationException ved deserialiseringsfeil") {
+            shouldThrow<SerializationException> {
+                "ikke en chaos god".fromJson(TestSerializer)
+            }
+        }
+    })
 
 private data class ChaosGod(
     val name: String,
-    val domain: String
+    val domain: String,
 ) {
-    override fun toString(): String =
-        "$name rules $domain"
+    override fun toString(): String = "$name rules $domain"
 }

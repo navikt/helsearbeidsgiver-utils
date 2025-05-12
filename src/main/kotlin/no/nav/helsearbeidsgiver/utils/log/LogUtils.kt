@@ -9,5 +9,4 @@ fun <T : Any> T.logger(): Logger =
         else -> this::class.java.let(LoggerFactory::getLogger)
     }
 
-fun sikkerLogger(): Logger =
-    "tjenestekall".logger()
+fun sikkerLogger(): Logger = "tjenestekall".logger()

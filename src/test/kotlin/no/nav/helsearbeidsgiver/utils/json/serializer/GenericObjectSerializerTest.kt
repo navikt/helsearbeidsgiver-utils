@@ -64,5 +64,5 @@ private object Mock {
                 "false": 0
             }
         }
-    """.removeJsonWhitespace()
+        """.removeJsonWhitespace()
 }

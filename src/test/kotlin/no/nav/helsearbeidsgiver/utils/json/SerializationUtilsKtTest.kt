@@ -26,14 +26,14 @@ class SerializationUtilsKtTest :
 
                 val expectedJson =
                     """
-                {
-                    "name": {
-                        "first": "Samwise",
-                        "last": "Gamgee"
-                    },
-                    "age": 38
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Samwise",
+                            "last": "Gamgee"
+                        },
+                        "age": 38
+                    }
+                    """.removeJsonWhitespace()
 
                 val actualJson = samwise.toJson(Hobbit.serializer()).toString()
 
@@ -63,23 +63,23 @@ class SerializationUtilsKtTest :
 
                 val expectedJson =
                     """
-                [
-                    {
-                        "name": {
-                            "first": "Samwise",
-                            "last": "Gamgee"
+                    [
+                        {
+                            "name": {
+                                "first": "Samwise",
+                                "last": "Gamgee"
+                            },
+                            "age": 38
                         },
-                        "age": 38
-                    },
-                    {
-                        "name": {
-                            "first": "Frodo",
-                            "last": "Baggins"
-                        },
-                        "age": 50
-                    }
-                ]
-            """.removeJsonWhitespace()
+                        {
+                            "name": {
+                                "first": "Frodo",
+                                "last": "Baggins"
+                            },
+                            "age": 50
+                        }
+                    ]
+                    """.removeJsonWhitespace()
 
                 val actualJson = hobbits.toJson(Hobbit.serializer()).toString()
 
@@ -113,11 +113,11 @@ class SerializationUtilsKtTest :
 
                 val expectedJson =
                     """
-                {
-                    "partall": [2, 4, 6],
-                    "oddetall": [1, 3, 5, 7]
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "partall": [2, 4, 6],
+                        "oddetall": [1, 3, 5, 7]
+                    }
+                    """.removeJsonWhitespace()
 
                 val actualJson = tallgrupper.toJson().toString()
 
@@ -167,14 +167,14 @@ class SerializationUtilsKtTest :
 
                 val expectedJson =
                     """
-                {
-                    "name": {
-                        "first": "Frodo",
-                        "last": "Baggins"
-                    },
-                    "age": 50
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Frodo",
+                            "last": "Baggins"
+                        },
+                        "age": 50
+                    }
+                    """.removeJsonWhitespace()
 
                 val actualJson = samwise.toJsonStr(Hobbit.serializer())
 

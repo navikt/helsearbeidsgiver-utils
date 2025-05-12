@@ -17,15 +17,15 @@ class DeserializationUtilsKtTest :
             test("ignorerer ukjente felt") {
                 val bilboJson =
                     """
-                {
-                    "name": {
-                        "first": "Bilbo",
-                        "last": "Baggins"
-                    },
-                    "age": 111,
-                    "adoptiveSon": "Frodo"
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Bilbo",
+                            "last": "Baggins"
+                        },
+                        "age": 111,
+                        "adoptiveSon": "Frodo"
+                    }
+                    """.removeJsonWhitespace()
                         .parseJson()
 
                 val expectedObject =
@@ -44,14 +44,14 @@ class DeserializationUtilsKtTest :
             test("deserialiserer korrekt fra json-streng til JsonElement") {
                 val bilboJson =
                     """
-                {
-                    "name": {
-                        "first": "Bilbo",
-                        "last": "Baggins"
-                    },
-                    "age": 111
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Bilbo",
+                            "last": "Baggins"
+                        },
+                        "age": 111
+                    }
+                    """.removeJsonWhitespace()
 
                 shouldNotThrowAny {
                     val parsed = bilboJson.parseJson()
@@ -71,14 +71,14 @@ class DeserializationUtilsKtTest :
             test("deserialiserer korrekt fra JsonElement til generisk T") {
                 val merryJson =
                     """
-                {
-                    "name": {
-                        "first": "Meriadoc",
-                        "last": "Brandybuck"
-                    },
-                    "age": 36
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Meriadoc",
+                            "last": "Brandybuck"
+                        },
+                        "age": 36
+                    }
+                    """.removeJsonWhitespace()
 
                 val expectedObject =
                     Hobbit(
@@ -107,14 +107,14 @@ class DeserializationUtilsKtTest :
             test("deserialiserer korrekt fra json-streng til generisk T") {
                 val pippinJson =
                     """
-                {
-                    "name": {
-                        "first": "Peregrin",
-                        "last": "Took"
-                    },
-                    "age": 28
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Peregrin",
+                            "last": "Took"
+                        },
+                        "age": 28
+                    }
+                    """.removeJsonWhitespace()
 
                 val expectedObject =
                     Hobbit(
@@ -143,15 +143,15 @@ class DeserializationUtilsKtTest :
             test("ignorerer ukjente felt") {
                 val rosieJson =
                     """
-                {
-                    "name": {
-                        "first": "Rosie",
-                        "last": "Gamgee"
-                    },
-                    "age": 34,
-                    "maidenName": "Cotton"
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Rosie",
+                            "last": "Gamgee"
+                        },
+                        "age": 34,
+                        "maidenName": "Cotton"
+                    }
+                    """.removeJsonWhitespace()
 
                 // Forventer to helt like objekter
                 val expectedObjects =
@@ -177,14 +177,14 @@ class DeserializationUtilsKtTest :
             test("deserialiserer korrekt fra JsonElement til Map<T, JsonElement>") {
                 val gandalfJson =
                     """
-                {
-                    "name": {
-                        "first": "Gandalf",
-                        "last": "The Grey"
-                    },
-                    "age": 2000
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "name": {
+                            "first": "Gandalf",
+                            "last": "The Grey"
+                        },
+                        "age": 2000
+                    }
+                    """.removeJsonWhitespace()
 
                 val expectedObject =
                     mapOf(
@@ -202,13 +202,13 @@ class DeserializationUtilsKtTest :
             test("deserialiserer korrekt fra JsonElement til Map<T, JsonElement>") {
                 val booksJson =
                     """
-                {
-                    "precursor": "The Hobbit",
-                    "1": "The Fellowship of the Ring",
-                    "2": "The Two Towers",
-                    "3": "The Return of the King"
-                }
-            """.removeJsonWhitespace()
+                    {
+                        "precursor": "The Hobbit",
+                        "1": "The Fellowship of the Ring",
+                        "2": "The Two Towers",
+                        "3": "The Return of the King"
+                    }
+                    """.removeJsonWhitespace()
 
                 val expectedObject =
                     mapOf(

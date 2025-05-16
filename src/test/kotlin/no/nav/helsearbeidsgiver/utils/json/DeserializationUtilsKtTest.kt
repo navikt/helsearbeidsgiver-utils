@@ -10,213 +10,230 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import no.nav.helsearbeidsgiver.utils.test.json.removeJsonWhitespace
 
-class DeserializationUtilsKtTest : FunSpec({
+class DeserializationUtilsKtTest :
+    FunSpec({
 
-    context("jsonIgnoreUnknown") {
-        test("ignorerer ukjente felt") {
-            val bilboJson = """
-                {
-                    "name": {
-                        "first": "Bilbo",
-                        "last": "Baggins"
-                    },
-                    "age": 111,
-                    "adoptiveSon": "Frodo"
-                }
-            """.removeJsonWhitespace()
-                .parseJson()
-
-            val expectedObject = Hobbit(
-                name = Name("Bilbo", "Baggins"),
-                age = 111
-            )
-
-            val actualObject = jsonConfig.decodeFromJsonElement(Hobbit.serializer(), bilboJson)
-
-            actualObject shouldBe expectedObject
-        }
-    }
-
-    context("parseJson") {
-        test("deserialiserer korrekt fra json-streng til JsonElement") {
-            val bilboJson = """
-                {
-                    "name": {
-                        "first": "Bilbo",
-                        "last": "Baggins"
-                    },
-                    "age": 111
-                }
-            """.removeJsonWhitespace()
-
-            shouldNotThrowAny {
-                val parsed = bilboJson.parseJson()
-
-                parsed.jsonObject.let { hobbit ->
-                    hobbit["name"].shouldNotBeNull().jsonObject.let { name ->
-                        name["first"].shouldNotBeNull().jsonPrimitive.content shouldBe "Bilbo"
-                        name["last"].shouldNotBeNull().jsonPrimitive.content shouldBe "Baggins"
+        context("jsonIgnoreUnknown") {
+            test("ignorerer ukjente felt") {
+                val bilboJson =
+                    """
+                    {
+                        "name": {
+                            "first": "Bilbo",
+                            "last": "Baggins"
+                        },
+                        "age": 111,
+                        "adoptiveSon": "Frodo"
                     }
-                    hobbit["age"].shouldNotBeNull().jsonPrimitive.content shouldBe "111"
+                    """.removeJsonWhitespace()
+                        .parseJson()
+
+                val expectedObject =
+                    Hobbit(
+                        name = Name("Bilbo", "Baggins"),
+                        age = 111,
+                    )
+
+                val actualObject = jsonConfig.decodeFromJsonElement(Hobbit.serializer(), bilboJson)
+
+                actualObject shouldBe expectedObject
+            }
+        }
+
+        context("parseJson") {
+            test("deserialiserer korrekt fra json-streng til JsonElement") {
+                val bilboJson =
+                    """
+                    {
+                        "name": {
+                            "first": "Bilbo",
+                            "last": "Baggins"
+                        },
+                        "age": 111
+                    }
+                    """.removeJsonWhitespace()
+
+                shouldNotThrowAny {
+                    val parsed = bilboJson.parseJson()
+
+                    parsed.jsonObject.let { hobbit ->
+                        hobbit["name"].shouldNotBeNull().jsonObject.let { name ->
+                            name["first"].shouldNotBeNull().jsonPrimitive.content shouldBe "Bilbo"
+                            name["last"].shouldNotBeNull().jsonPrimitive.content shouldBe "Baggins"
+                        }
+                        hobbit["age"].shouldNotBeNull().jsonPrimitive.content shouldBe "111"
+                    }
                 }
             }
         }
-    }
 
-    context("fromJson") {
-        test("deserialiserer korrekt fra JsonElement til generisk T") {
-            val merryJson = """
-                {
-                    "name": {
-                        "first": "Meriadoc",
-                        "last": "Brandybuck"
-                    },
-                    "age": 36
-                }
-            """.removeJsonWhitespace()
+        context("fromJson") {
+            test("deserialiserer korrekt fra JsonElement til generisk T") {
+                val merryJson =
+                    """
+                    {
+                        "name": {
+                            "first": "Meriadoc",
+                            "last": "Brandybuck"
+                        },
+                        "age": 36
+                    }
+                    """.removeJsonWhitespace()
 
-            val expectedObject = Hobbit(
-                name = Name("Meriadoc", "Brandybuck"),
-                age = 36
-            )
+                val expectedObject =
+                    Hobbit(
+                        name = Name("Meriadoc", "Brandybuck"),
+                        age = 36,
+                    )
 
-            val actualObject = merryJson.parseJson().fromJson(Hobbit.serializer())
+                val actualObject = merryJson.parseJson().fromJson(Hobbit.serializer())
 
-            actualObject shouldBe expectedObject
-        }
-
-        test("deserialiserer korrekt fra JsonElement til nullable generisk T") {
-            val nicknamesJsonList = listOf("\"Meriadoc\"", "null")
-
-            val expectedJsonList = listOf("Meriadoc", null)
-
-            val actualJsonList = nicknamesJsonList.map {
-                it.parseJson().fromJson(String.serializer().nullable)
+                actualObject shouldBe expectedObject
             }
 
-            actualJsonList shouldBe expectedJsonList
-        }
+            test("deserialiserer korrekt fra JsonElement til nullable generisk T") {
+                val nicknamesJsonList = listOf("\"Meriadoc\"", "null")
 
-        test("deserialiserer korrekt fra json-streng til generisk T") {
-            val pippinJson = """
-                {
-                    "name": {
-                        "first": "Peregrin",
-                        "last": "Took"
-                    },
-                    "age": 28
-                }
-            """.removeJsonWhitespace()
+                val expectedJsonList = listOf("Meriadoc", null)
 
-            val expectedObject = Hobbit(
-                name = Name("Peregrin", "Took"),
-                age = 28
-            )
+                val actualJsonList =
+                    nicknamesJsonList.map {
+                        it.parseJson().fromJson(String.serializer().nullable)
+                    }
 
-            val actualObject = pippinJson.fromJson(Hobbit.serializer())
-
-            actualObject shouldBe expectedObject
-        }
-
-        test("deserialiserer korrekt fra json-streng til nullable generisk T") {
-            val nicknamesJsonList = listOf("\"Peregin\"", "null")
-
-            val expectedJsonList = listOf("Peregin", null)
-
-            val actualJsonList = nicknamesJsonList.map {
-                it.fromJson(String.serializer().nullable)
+                actualJsonList shouldBe expectedJsonList
             }
 
-            actualJsonList shouldBe expectedJsonList
-        }
+            test("deserialiserer korrekt fra json-streng til generisk T") {
+                val pippinJson =
+                    """
+                    {
+                        "name": {
+                            "first": "Peregrin",
+                            "last": "Took"
+                        },
+                        "age": 28
+                    }
+                    """.removeJsonWhitespace()
 
-        test("ignorerer ukjente felt") {
-            val rosieJson = """
-                {
-                    "name": {
-                        "first": "Rosie",
-                        "last": "Gamgee"
-                    },
-                    "age": 34,
-                    "maidenName": "Cotton"
-                }
-            """.removeJsonWhitespace()
+                val expectedObject =
+                    Hobbit(
+                        name = Name("Peregrin", "Took"),
+                        age = 28,
+                    )
 
-            // Forventer to helt like objekter
-            val expectedObjects = List(2) {
-                Hobbit(
-                    name = Name("Rosie", "Gamgee"),
-                    age = 34
-                )
+                val actualObject = pippinJson.fromJson(Hobbit.serializer())
+
+                actualObject shouldBe expectedObject
             }
 
-            // Begge metoder skal ignorere ukjent felt
-            val actualObjects = listOf(
-                rosieJson.parseJson().fromJson(Hobbit.serializer()),
-                rosieJson.fromJson(Hobbit.serializer())
-            )
+            test("deserialiserer korrekt fra json-streng til nullable generisk T") {
+                val nicknamesJsonList = listOf("\"Peregin\"", "null")
 
-            actualObjects shouldBe expectedObjects
-        }
-    }
+                val expectedJsonList = listOf("Peregin", null)
 
-    context("fromJsonMap") {
-        test("deserialiserer korrekt fra JsonElement til Map<T, JsonElement>") {
-            val gandalfJson = """
-                {
-                    "name": {
-                        "first": "Gandalf",
-                        "last": "The Grey"
-                    },
-                    "age": 2000
-                }
-            """.removeJsonWhitespace()
+                val actualJsonList =
+                    nicknamesJsonList.map {
+                        it.fromJson(String.serializer().nullable)
+                    }
 
-            val expectedObject = mapOf(
-                "name" to Name("Gandalf", "The Grey").toJson(Name.serializer()),
-                "age" to 2000.toJson(Int.serializer())
-            )
+                actualJsonList shouldBe expectedJsonList
+            }
 
-            val actualObject = gandalfJson.parseJson().fromJsonMap(String.serializer())
+            test("ignorerer ukjente felt") {
+                val rosieJson =
+                    """
+                    {
+                        "name": {
+                            "first": "Rosie",
+                            "last": "Gamgee"
+                        },
+                        "age": 34,
+                        "maidenName": "Cotton"
+                    }
+                    """.removeJsonWhitespace()
 
-            actualObject shouldBe expectedObject
-        }
-    }
+                // Forventer to helt like objekter
+                val expectedObjects =
+                    List(2) {
+                        Hobbit(
+                            name = Name("Rosie", "Gamgee"),
+                            age = 34,
+                        )
+                    }
 
-    context("fromJsonMapFiltered") {
-        test("deserialiserer korrekt fra JsonElement til Map<T, JsonElement>") {
-            val booksJson = """
-                {
-                    "precursor": "The Hobbit",
-                    "1": "The Fellowship of the Ring",
-                    "2": "The Two Towers",
-                    "3": "The Return of the King"
-                }
-            """.removeJsonWhitespace()
+                // Begge metoder skal ignorere ukjent felt
+                val actualObjects =
+                    listOf(
+                        rosieJson.parseJson().fromJson(Hobbit.serializer()),
+                        rosieJson.fromJson(Hobbit.serializer()),
+                    )
 
-            val expectedObject = mapOf(
-                1 to "The Fellowship of the Ring".toJson(),
-                2 to "The Two Towers".toJson(),
-                3 to "The Return of the King".toJson()
-            )
-
-            val actualObject = booksJson.parseJson().fromJsonMapFiltered(Int.serializer())
-
-            actualObject shouldBe expectedObject
-        }
-    }
-
-    context("tryOrNull-hjelpefunksjon") {
-        test("verdi returneres") {
-            val result = tryOrNull { "all good" }
-
-            result shouldBe "all good"
+                actualObjects shouldBe expectedObjects
+            }
         }
 
-        test("exception mappes til null") {
-            val result = tryOrNull<String> { throw RuntimeException("shit's on fire, yo") }
+        context("fromJsonMap") {
+            test("deserialiserer korrekt fra JsonElement til Map<T, JsonElement>") {
+                val gandalfJson =
+                    """
+                    {
+                        "name": {
+                            "first": "Gandalf",
+                            "last": "The Grey"
+                        },
+                        "age": 2000
+                    }
+                    """.removeJsonWhitespace()
 
-            result shouldBe null
+                val expectedObject =
+                    mapOf(
+                        "name" to Name("Gandalf", "The Grey").toJson(Name.serializer()),
+                        "age" to 2000.toJson(Int.serializer()),
+                    )
+
+                val actualObject = gandalfJson.parseJson().fromJsonMap(String.serializer())
+
+                actualObject shouldBe expectedObject
+            }
         }
-    }
-})
+
+        context("fromJsonMapFiltered") {
+            test("deserialiserer korrekt fra JsonElement til Map<T, JsonElement>") {
+                val booksJson =
+                    """
+                    {
+                        "precursor": "The Hobbit",
+                        "1": "The Fellowship of the Ring",
+                        "2": "The Two Towers",
+                        "3": "The Return of the King"
+                    }
+                    """.removeJsonWhitespace()
+
+                val expectedObject =
+                    mapOf(
+                        1 to "The Fellowship of the Ring".toJson(),
+                        2 to "The Two Towers".toJson(),
+                        3 to "The Return of the King".toJson(),
+                    )
+
+                val actualObject = booksJson.parseJson().fromJsonMapFiltered(Int.serializer())
+
+                actualObject shouldBe expectedObject
+            }
+        }
+
+        context("tryOrNull-hjelpefunksjon") {
+            test("verdi returneres") {
+                val result = tryOrNull { "all good" }
+
+                result shouldBe "all good"
+            }
+
+            test("exception mappes til null") {
+                val result = tryOrNull<String> { throw RuntimeException("shit's on fire, yo") }
+
+                result shouldBe null
+            }
+        }
+    })

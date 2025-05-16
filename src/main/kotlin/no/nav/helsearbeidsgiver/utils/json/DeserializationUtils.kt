@@ -9,26 +9,24 @@ import no.nav.helsearbeidsgiver.utils.collection.mapKeysNotNull
 import no.nav.helsearbeidsgiver.utils.json.serializer.GenericObjectSerializer
 
 @OptIn(ExperimentalSerializationApi::class)
-val jsonConfig = Json {
-    ignoreUnknownKeys = true
-    decodeEnumsCaseInsensitive = true
-}
+val jsonConfig =
+    Json {
+        ignoreUnknownKeys = true
+        decodeEnumsCaseInsensitive = true
+    }
 
-fun String.parseJson(): JsonElement =
-    Json.parseToJsonElement(this)
+fun String.parseJson(): JsonElement = Json.parseToJsonElement(this)
 
-fun <T> JsonElement.fromJson(serializer: KSerializer<T>): T =
-    jsonConfig.decodeFromJsonElement(serializer, this)
+fun <T> JsonElement.fromJson(serializer: KSerializer<T>): T = jsonConfig.decodeFromJsonElement(serializer, this)
 
-fun <T> String.fromJson(serializer: KSerializer<T>): T =
-    parseJson().fromJson(serializer)
+fun <T> String.fromJson(serializer: KSerializer<T>): T = parseJson().fromJson(serializer)
 
 fun <T : Any> JsonElement.fromJsonMap(keySerializer: KSerializer<T>): Map<T, JsonElement> =
     fromJson(
         MapSerializer(
             keySerializer,
-            JsonElement.serializer()
-        )
+            JsonElement.serializer(),
+        ),
     )
 
 fun <T : Any> JsonElement.fromJsonMapFiltered(keySerializer: KSerializer<T>): Map<T, JsonElement> =
@@ -39,5 +37,4 @@ fun <T : Any> JsonElement.fromJsonMapFiltered(keySerializer: KSerializer<T>): Ma
             }
         }
 
-internal fun <T : Any> tryOrNull(block: () -> T): T? =
-    runCatching(block).getOrNull()
+internal fun <T : Any> tryOrNull(block: () -> T): T? = runCatching(block).getOrNull()

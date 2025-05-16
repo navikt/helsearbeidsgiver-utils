@@ -8,28 +8,29 @@ import no.nav.helsearbeidsgiver.utils.json.fromJson
 import no.nav.helsearbeidsgiver.utils.json.toJsonStr
 import java.util.UUID
 
-private const val mockUuid = "01234567-abcd-0123-abcd-012345678901"
+private const val MOCK_UUID = "01234567-abcd-0123-abcd-012345678901"
 
-class UuidSerializerTest : FunSpec({
-    test("serialiserer korrekt") {
-        val uuid = UUID.fromString(mockUuid)
+class UuidSerializerTest :
+    FunSpec({
+        test("serialiserer korrekt") {
+            val uuid = UUID.fromString(MOCK_UUID)
 
-        val json = uuid.toJsonStr(UuidSerializer)
+            val json = uuid.toJsonStr(UuidSerializer)
 
-        json shouldBe "\"$mockUuid\""
-    }
-
-    test("deserialiserer korrekt") {
-        val json = "\"$mockUuid\""
-
-        val uuid = json.fromJson(UuidSerializer)
-
-        uuid shouldBe UUID.fromString(mockUuid)
-    }
-
-    test("gir SerializationException ved deserialiseringsfeil") {
-        shouldThrow<SerializationException> {
-            "ikke en uuid".fromJson(UuidSerializer)
+            json shouldBe "\"$MOCK_UUID\""
         }
-    }
-})
+
+        test("deserialiserer korrekt") {
+            val json = "\"$MOCK_UUID\""
+
+            val uuid = json.fromJson(UuidSerializer)
+
+            uuid shouldBe UUID.fromString(MOCK_UUID)
+        }
+
+        test("gir SerializationException ved deserialiseringsfeil") {
+            shouldThrow<SerializationException> {
+                "ikke en uuid".fromJson(UuidSerializer)
+            }
+        }
+    })

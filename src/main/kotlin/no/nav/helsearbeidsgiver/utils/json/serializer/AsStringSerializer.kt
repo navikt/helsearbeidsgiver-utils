@@ -10,17 +10,21 @@ import kotlinx.serialization.encoding.Encoder
 
 abstract class AsStringSerializer<T : Any>(
     serialName: String,
-    private val parse: (String) -> T
+    private val parse: (String) -> T,
 ) : KSerializer<T> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor(serialName, PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: T) {
+    override fun serialize(
+        encoder: Encoder,
+        value: T,
+    ) {
         value.toString().let(encoder::encodeString)
     }
 
     override fun deserialize(decoder: Decoder): T =
-        decoder.decodeString()
+        decoder
+            .decodeString()
             .runCatching(parse)
             .getOrElse { throw SerializationException(it) }
 }

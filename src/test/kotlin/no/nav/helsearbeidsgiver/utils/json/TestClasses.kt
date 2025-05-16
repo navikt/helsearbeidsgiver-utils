@@ -5,11 +5,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Hobbit(
     val name: Name,
-    val age: Int
+    val age: Int,
 )
 
 @Serializable
 data class Name(
     val first: String,
-    val last: String
+    val last: String,
 )

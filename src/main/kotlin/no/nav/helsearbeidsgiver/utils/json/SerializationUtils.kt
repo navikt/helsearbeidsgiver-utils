@@ -15,31 +15,23 @@ import java.time.LocalDateTime
 import java.time.YearMonth
 import java.util.UUID
 
-fun <T> T.toJson(serializer: KSerializer<T>): JsonElement =
-    Json.encodeToJsonElement(serializer, this)
+fun <T> T.toJson(serializer: KSerializer<T>): JsonElement = Json.encodeToJsonElement(serializer, this)
 
-fun <T> T.toJsonStr(serializer: KSerializer<T>): String =
-    toJson(serializer).toString()
+fun <T> T.toJsonStr(serializer: KSerializer<T>): String = toJson(serializer).toString()
 
 fun <T> List<T>.toJson(elementSerializer: KSerializer<T>): JsonElement =
     toJson(
-        elementSerializer.list()
+        elementSerializer.list(),
     )
 
-fun String.toJson(): JsonElement =
-    toJson(String.serializer())
+fun String.toJson(): JsonElement = toJson(String.serializer())
 
-fun Map<String, JsonElement>.toJson(): JsonElement =
-    toJson(GenericObjectSerializer)
+fun Map<String, JsonElement>.toJson(): JsonElement = toJson(GenericObjectSerializer)
 
-fun YearMonth.toJson(): JsonElement =
-    toJson(YearMonthSerializer)
+fun YearMonth.toJson(): JsonElement = toJson(YearMonthSerializer)
 
-fun LocalDate.toJson(): JsonElement =
-    toJson(LocalDateSerializer)
+fun LocalDate.toJson(): JsonElement = toJson(LocalDateSerializer)
 
-fun LocalDateTime.toJson(): JsonElement =
-    toJson(LocalDateTimeSerializer)
+fun LocalDateTime.toJson(): JsonElement = toJson(LocalDateTimeSerializer)
 
-fun UUID.toJson(): JsonElement =
-    toJson(UuidSerializer)
+fun UUID.toJson(): JsonElement = toJson(UuidSerializer)

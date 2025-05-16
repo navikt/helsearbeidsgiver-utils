@@ -20,20 +20,24 @@ object MdcUtils {
     inline fun <T> withCallId(block: () -> T): T =
         withLogFields(
             Keys.CALL_ID to newCallId(),
-            block = block
+            block = block,
         )
 
     inline fun <T> withCallIdAsUuid(block: () -> T): T =
         withLogFields(
             Keys.CALL_ID to uuid4(),
-            block = block
+            block = block,
         )
 
-    inline fun <T> withLogFields(vararg logFields: Pair<String, String>, block: () -> T): T {
-        val backup = logFields.map { (key, _) ->
-            key to MDC.get(key)
-        }
-            .mapValuesNotNull()
+    inline fun <T> withLogFields(
+        vararg logFields: Pair<String, String>,
+        block: () -> T,
+    ): T {
+        val backup =
+            logFields
+                .map { (key, _) ->
+                    key to MDC.get(key)
+                }.mapValuesNotNull()
 
         logFields.forEach { (key, value) ->
             MDC.put(key, value)
@@ -53,12 +57,10 @@ object MdcUtils {
     }
 
     @PublishedApi
-    internal fun newCallId(): String =
-        "CallId_${Random.nextUInt()}_${System.currentTimeMillis()}"
+    internal fun newCallId(): String = "CallId_${Random.nextUInt()}_${System.currentTimeMillis()}"
 
     @PublishedApi
-    internal fun uuid4(): String =
-        UUID.randomUUID().toString()
+    internal fun uuid4(): String = UUID.randomUUID().toString()
 
     @PublishedApi
     internal fun List<Pair<String, String?>>.mapValuesNotNull(): List<Pair<String, String>> =

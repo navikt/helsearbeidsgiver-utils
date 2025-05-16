@@ -10,38 +10,50 @@ import kotlinx.coroutines.runBlocking
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
-fun <T> mockStatic(fn: KFunction<*>, block: suspend () -> T): T =
+fun <T> mockStatic(
+    fn: KFunction<*>,
+    block: suspend () -> T,
+): T =
     runWithSetup(
         block = block,
         setup = { mockkStatic(fn) },
-        teardown = { unmockkStatic(fn) }
+        teardown = { unmockkStatic(fn) },
     )
 
-fun <T> mockStatic(klass: KClass<*>, block: suspend () -> T): T =
+fun <T> mockStatic(
+    klass: KClass<*>,
+    block: suspend () -> T,
+): T =
     runWithSetup(
         block = block,
         setup = { mockkStatic(klass) },
-        teardown = { unmockkStatic(klass) }
+        teardown = { unmockkStatic(klass) },
     )
 
-fun <T> mockConstructor(klass: KClass<*>, block: suspend () -> T): T =
+fun <T> mockConstructor(
+    klass: KClass<*>,
+    block: suspend () -> T,
+): T =
     runWithSetup(
         block = block,
         setup = { mockkConstructor(klass) },
-        teardown = { unmockkConstructor(klass) }
+        teardown = { unmockkConstructor(klass) },
     )
 
-fun <T> mockObject(obj: Any, block: suspend () -> T): T =
+fun <T> mockObject(
+    obj: Any,
+    block: suspend () -> T,
+): T =
     runWithSetup(
         block = block,
         setup = { mockkObject(obj) },
-        teardown = { unmockkObject(obj) }
+        teardown = { unmockkObject(obj) },
     )
 
 private fun <T> runWithSetup(
     block: suspend () -> T,
     setup: () -> Unit,
-    teardown: () -> Unit
+    teardown: () -> Unit,
 ): T {
     setup()
     return try {

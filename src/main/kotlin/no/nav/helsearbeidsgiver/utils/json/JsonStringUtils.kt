@@ -5,5 +5,4 @@ import kotlinx.serialization.json.JsonElement
 
 private val jsonPrettyPrint = Json { prettyPrint = true }
 
-fun JsonElement.toPretty(): String =
-    jsonPrettyPrint.encodeToString(JsonElement.serializer(), this)
+fun JsonElement.toPretty(): String = jsonPrettyPrint.encodeToString(JsonElement.serializer(), this)

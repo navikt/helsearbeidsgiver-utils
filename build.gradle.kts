@@ -6,7 +6,7 @@ version = "0.9.0"
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("org.jlleitschuh.gradle.ktlint")
+    id("org.jmailen.kotlinter")
     id("maven-publish")
     id("java-test-fixtures")
 }

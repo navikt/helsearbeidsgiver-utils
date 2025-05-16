@@ -12,28 +12,31 @@ private val foedselsdatoFormatter: DateTimeFormatter = DateTimeFormatter.ofPatte
 
 enum class TestPerson {
     NAV,
-    TEST_NORGE
+    TEST_NORGE,
 }
 
 fun Fnr.Companion.genererGyldig(
     somDnr: Boolean = false,
-    forTestPerson: TestPerson? = null
+    forTestPerson: TestPerson? = null,
 ): Fnr {
     var fnrSiffer = listOf(10)
 
     while (10 in fnrSiffer.takeLast(2)) {
-        val foedseldato = LocalDate.ofYearDay(
-            Random.nextInt(1900, 2024),
-            Random.nextInt(1, 366)
-        )
-            .format(foedselsdatoFormatter)
+        val foedseldato =
+            LocalDate
+                .ofYearDay(
+                    Random.nextInt(1900, 2024),
+                    Random.nextInt(1, 366),
+                ).format(foedselsdatoFormatter)
 
         val individSiffer = List(3) { Random.nextInt(10) }
 
-        val fnrUtenSjekksum = foedseldato.map(Char::digitToInt)
-            .justerForDnr(somDnr)
-            .justerForTestPerson(forTestPerson)
-            .plus(individSiffer)
+        val fnrUtenSjekksum =
+            foedseldato
+                .map(Char::digitToInt)
+                .justerForDnr(somDnr)
+                .justerForTestPerson(forTestPerson)
+                .plus(individSiffer)
 
         val sjekksum1 = sjekksum(fnrUtenSjekksum, fnrSifferVekter1)
         val sjekksum2 = sjekksum(fnrUtenSjekksum.plus(sjekksum1), fnrSifferVekter2)
@@ -54,10 +57,11 @@ private fun List<Int>.justerForDnr(somDnr: Boolean): List<Int> =
 
 private fun List<Int>.justerForTestPerson(forTestPerson: TestPerson?): List<Int> =
     if (forTestPerson != null) {
-        val testPersonJustertSiffer = when (forTestPerson) {
-            TestPerson.NAV -> get(2) + 4
-            TestPerson.TEST_NORGE -> get(2) + 8
-        }
+        val testPersonJustertSiffer =
+            when (forTestPerson) {
+                TestPerson.NAV -> get(2) + 4
+                TestPerson.TEST_NORGE -> get(2) + 8
+            }
 
         take(2) + testPersonJustertSiffer + drop(3)
     } else {

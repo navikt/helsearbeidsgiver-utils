@@ -9,13 +9,14 @@ internal val orgnrSifferVekter = listOf(3, 2, 7, 6, 5, 4, 3, 2)
 
 @Serializable
 @JvmInline
-value class Orgnr(val verdi: String) {
+value class Orgnr(
+    val verdi: String,
+) {
     init {
         require(erGyldig(verdi)) { "Ugyldig organisasjonsnummer." }
     }
 
-    override fun toString(): String =
-        verdi
+    override fun toString(): String = verdi
 
     companion object {
         /** Les [her](https://www.brreg.no/om-oss/registrene-vare/om-enhetsregisteret/organisasjonsnummeret/) for forklaring av regler. */

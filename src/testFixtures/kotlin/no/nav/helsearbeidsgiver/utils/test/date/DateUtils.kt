@@ -6,118 +6,97 @@ import java.time.Month
 import java.time.YearMonth
 
 // 01.01.2018 er en mandag
-private const val defaultAar = 2018
+private const val DEFAULT_AAR = 2018
 
 val Int.januar get(): LocalDate =
-    januar(defaultAar)
+    januar(DEFAULT_AAR)
 
-fun Int.januar(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.JANUARY, this)
+fun Int.januar(aar: Int): LocalDate = LocalDate.of(aar, Month.JANUARY, this)
 
-fun januar(aar: Int): YearMonth =
-    1.januar(aar).toYearMonth()
+fun januar(aar: Int): YearMonth = 1.januar(aar).toYearMonth()
 
 val Int.februar get(): LocalDate =
-    februar(defaultAar)
+    februar(DEFAULT_AAR)
 
-fun Int.februar(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.FEBRUARY, this)
+fun Int.februar(aar: Int): LocalDate = LocalDate.of(aar, Month.FEBRUARY, this)
 
-fun februar(aar: Int): YearMonth =
-    1.februar(aar).toYearMonth()
+fun februar(aar: Int): YearMonth = 1.februar(aar).toYearMonth()
 
 val Int.mars get(): LocalDate =
-    mars(defaultAar)
+    mars(DEFAULT_AAR)
 
-fun Int.mars(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.MARCH, this)
+fun Int.mars(aar: Int): LocalDate = LocalDate.of(aar, Month.MARCH, this)
 
-fun mars(aar: Int): YearMonth =
-    1.mars(aar).toYearMonth()
+fun mars(aar: Int): YearMonth = 1.mars(aar).toYearMonth()
 
 val Int.april get(): LocalDate =
-    april(defaultAar)
+    april(DEFAULT_AAR)
 
-fun Int.april(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.APRIL, this)
+fun Int.april(aar: Int): LocalDate = LocalDate.of(aar, Month.APRIL, this)
 
-fun april(aar: Int): YearMonth =
-    1.april(aar).toYearMonth()
+fun april(aar: Int): YearMonth = 1.april(aar).toYearMonth()
 
 val Int.mai get(): LocalDate =
-    mai(defaultAar)
+    mai(DEFAULT_AAR)
 
-fun Int.mai(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.MAY, this)
+fun Int.mai(aar: Int): LocalDate = LocalDate.of(aar, Month.MAY, this)
 
-fun mai(aar: Int): YearMonth =
-    1.mai(aar).toYearMonth()
+fun mai(aar: Int): YearMonth = 1.mai(aar).toYearMonth()
 
 val Int.juni get(): LocalDate =
-    juni(defaultAar)
+    juni(DEFAULT_AAR)
 
-fun Int.juni(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.JUNE, this)
+fun Int.juni(aar: Int): LocalDate = LocalDate.of(aar, Month.JUNE, this)
 
-fun juni(aar: Int): YearMonth =
-    1.juni(aar).toYearMonth()
+fun juni(aar: Int): YearMonth = 1.juni(aar).toYearMonth()
 
 val Int.juli get(): LocalDate =
-    juli(defaultAar)
+    juli(DEFAULT_AAR)
 
-fun Int.juli(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.JULY, this)
+fun Int.juli(aar: Int): LocalDate = LocalDate.of(aar, Month.JULY, this)
 
-fun juli(aar: Int): YearMonth =
-    1.juli(aar).toYearMonth()
+fun juli(aar: Int): YearMonth = 1.juli(aar).toYearMonth()
 
 val Int.august get(): LocalDate =
-    august(defaultAar)
+    august(DEFAULT_AAR)
 
-fun Int.august(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.AUGUST, this)
+fun Int.august(aar: Int): LocalDate = LocalDate.of(aar, Month.AUGUST, this)
 
-fun august(aar: Int): YearMonth =
-    1.august(aar).toYearMonth()
+fun august(aar: Int): YearMonth = 1.august(aar).toYearMonth()
 
 val Int.september get(): LocalDate =
-    september(defaultAar)
+    september(DEFAULT_AAR)
 
-fun Int.september(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.SEPTEMBER, this)
+fun Int.september(aar: Int): LocalDate = LocalDate.of(aar, Month.SEPTEMBER, this)
 
-fun september(aar: Int): YearMonth =
-    1.september(aar).toYearMonth()
+fun september(aar: Int): YearMonth = 1.september(aar).toYearMonth()
 
 val Int.oktober get() =
-    oktober(defaultAar)
+    oktober(DEFAULT_AAR)
 
-fun Int.oktober(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.OCTOBER, this)
+fun Int.oktober(aar: Int): LocalDate = LocalDate.of(aar, Month.OCTOBER, this)
 
-fun oktober(aar: Int): YearMonth =
-    1.oktober(aar).toYearMonth()
+fun oktober(aar: Int): YearMonth = 1.oktober(aar).toYearMonth()
 
 val Int.november get() =
-    november(defaultAar)
+    november(DEFAULT_AAR)
 
-fun Int.november(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.NOVEMBER, this)
+fun Int.november(aar: Int): LocalDate = LocalDate.of(aar, Month.NOVEMBER, this)
 
-fun november(aar: Int): YearMonth =
-    1.november(aar).toYearMonth()
+fun november(aar: Int): YearMonth = 1.november(aar).toYearMonth()
 
 val Int.desember get() =
-    desember(defaultAar)
+    desember(DEFAULT_AAR)
 
-fun Int.desember(aar: Int): LocalDate =
-    LocalDate.of(aar, Month.DECEMBER, this)
+fun Int.desember(aar: Int): LocalDate = LocalDate.of(aar, Month.DECEMBER, this)
 
-fun desember(aar: Int): YearMonth =
-    1.desember(aar).toYearMonth()
+fun desember(aar: Int): YearMonth = 1.desember(aar).toYearMonth()
 
-fun LocalDate.kl(time: Int, minutt: Int, sekund: Int, nanosekund: Int): LocalDateTime =
-    atTime(time, minutt, sekund, nanosekund)
+fun LocalDate.kl(
+    time: Int,
+    minutt: Int,
+    sekund: Int,
+    nanosekund: Int,
+): LocalDateTime = atTime(time, minutt, sekund, nanosekund)
 
-private fun LocalDate.toYearMonth(): YearMonth =
-    YearMonth.from(this)
+private fun LocalDate.toYearMonth(): YearMonth = YearMonth.from(this)

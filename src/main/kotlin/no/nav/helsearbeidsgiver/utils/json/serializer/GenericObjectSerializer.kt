@@ -11,18 +11,21 @@ import kotlinx.serialization.json.JsonElement
 
 @OptIn(ExperimentalSerializationApi::class)
 object GenericObjectSerializer : KSerializer<Map<String, JsonElement>> {
-    private val delegateSerializer = MapSerializer(
-        String.serializer(),
-        JsonElement.serializer()
-    )
+    private val delegateSerializer =
+        MapSerializer(
+            String.serializer(),
+            JsonElement.serializer(),
+        )
 
     override val descriptor: SerialDescriptor =
         SerialDescriptor("helsearbeidsgiver.kotlinx.GenericObject", delegateSerializer.descriptor)
 
-    override fun serialize(encoder: Encoder, value: Map<String, JsonElement>) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Map<String, JsonElement>,
+    ) {
         encoder.encodeSerializableValue(delegateSerializer, value)
     }
 
-    override fun deserialize(decoder: Decoder): Map<String, JsonElement> =
-        decoder.decodeSerializableValue(delegateSerializer)
+    override fun deserialize(decoder: Decoder): Map<String, JsonElement> = decoder.decodeSerializableValue(delegateSerializer)
 }

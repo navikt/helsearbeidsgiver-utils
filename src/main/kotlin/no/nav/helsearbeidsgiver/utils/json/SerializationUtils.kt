@@ -10,6 +10,8 @@ import no.nav.helsearbeidsgiver.utils.json.serializer.LocalDateTimeSerializer
 import no.nav.helsearbeidsgiver.utils.json.serializer.UuidSerializer
 import no.nav.helsearbeidsgiver.utils.json.serializer.YearMonthSerializer
 import no.nav.helsearbeidsgiver.utils.json.serializer.list
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
+import no.nav.helsearbeidsgiver.utils.wrapper.Orgnr
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
@@ -35,3 +37,7 @@ fun LocalDate.toJson(): JsonElement = toJson(LocalDateSerializer)
 fun LocalDateTime.toJson(): JsonElement = toJson(LocalDateTimeSerializer)
 
 fun UUID.toJson(): JsonElement = toJson(UuidSerializer)
+
+fun Orgnr.toJson(): JsonElement = toJson(Orgnr.serializer())
+
+fun Fnr.toJson(): JsonElement = toJson(Fnr.serializer())

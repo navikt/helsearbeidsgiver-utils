@@ -9,6 +9,9 @@ import no.nav.helsearbeidsgiver.utils.test.date.januar
 import no.nav.helsearbeidsgiver.utils.test.date.juli
 import no.nav.helsearbeidsgiver.utils.test.date.kl
 import no.nav.helsearbeidsgiver.utils.test.json.removeJsonWhitespace
+import no.nav.helsearbeidsgiver.utils.test.wrapper.genererGyldig
+import no.nav.helsearbeidsgiver.utils.wrapper.Fnr
+import no.nav.helsearbeidsgiver.utils.wrapper.Orgnr
 import java.time.Month
 import java.time.YearMonth
 import java.util.UUID
@@ -154,6 +157,22 @@ class SerializationUtilsKtTest :
                 val json = uuid.toJson().toString()
 
                 json shouldBe "\"$uuid\""
+            }
+
+            test("serialiserer korrekt fra Orgnr til JsonElement") {
+                val orgnr = Orgnr.genererGyldig()
+
+                val json = orgnr.toJson().toString()
+
+                json shouldBe "\"$orgnr\""
+            }
+
+            test("serialiserer korrekt fra Fnr til JsonElement") {
+                val fnr = Fnr.genererGyldig()
+
+                val json = fnr.toJson().toString()
+
+                json shouldBe "\"$fnr\""
             }
         }
 

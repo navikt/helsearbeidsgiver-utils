@@ -6,10 +6,17 @@ import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.maps.shouldContainExactly
-import kotlinx.coroutines.delay
+import io.mockk.every
+import no.nav.helsearbeidsgiver.utils.test.date.august
+import no.nav.helsearbeidsgiver.utils.test.date.juli
+import no.nav.helsearbeidsgiver.utils.test.date.kl
+import no.nav.helsearbeidsgiver.utils.test.mock.mockStatic
+import java.time.LocalDateTime
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.times
+import kotlin.time.toJavaDuration
 
 class LocalCacheTest :
     FunSpec({
@@ -53,67 +60,167 @@ class LocalCacheTest :
             }
 
             test("ved utgått cache-element så erstattes element med resultat fra default-funksjon") {
-                cache = LocalCache(LocalCache.Config(Duration.ZERO, 4))
+                mockStatic(LocalDateTime::class) {
+                    val origoDateTime = 7.juli.kl(12, 0, 0, 0)
+                    val key = "key-1"
+                    val valueExpired = 1
+                    val value = 2
 
-                val key = "key-1"
-                val valueExpired = 1
-                val value = 2
+                    // Insert element som skal utgå
+                    every { LocalDateTime.now() } returns origoDateTime
 
-                // Insert element som skal utgå
-                cache.getOrPut(key) { valueExpired }
+                    cache.getOrPut(key) {
+                        valueExpired
+                    }
 
-                // Vent til element utgår
-                delay(10.milliseconds)
+                    // Sjekk at elementet har utgått og må erstattes
+                    every { LocalDateTime.now() } returns origoDateTime.plus(2.hours)
 
-                // Sjekk at elementet har utgått og må erstattes
-                var defaultWasCalled = false
+                    var defaultWasCalled = false
 
-                cache
-                    .getOrPut(key) {
-                        defaultWasCalled = true
-                        value
-                    }.shouldBeExactly(value)
+                    cache
+                        .getOrPut(key) {
+                            defaultWasCalled = true
+                            value
+                        }.shouldBeExactly(value)
 
-                defaultWasCalled.shouldBeTrue()
+                    defaultWasCalled.shouldBeTrue()
+                }
             }
 
-            test("ved overtredelse av maks antall cachede elementer kastes første (tidligste) element ut") {
-                val keys = listOf("key-0", "key-1", "key-2", "key-3", "key-4")
-                val values = (0..4).toList()
+            test("ved overtredelse av maks antall elementer hvor ingen utgåtte så kastes eldste elementer ut") {
+                mockStatic(LocalDateTime::class) {
+                    val origoDateTime = 18.juli.kl(12, 0, 0, 0)
+                    val values = (0..5).toList()
+                    val keys = values.map { "key-$it" }
 
-                // Insert fire første elementer (cachen blir full)
-                (0..3).map {
-                    cache.getOrPut(keys[it]) { values[it] }
+                    // Insert fire elementer (cachen blir full)
+                    (0..3).forEach {
+                        every { LocalDateTime.now() } returns origoDateTime.plus(it * 10.minutes)
+                        cache.getOrPut(keys[it]) { values[it] }
+                    }
+
+                    // Sjekk at elementer er cachet
+                    (0..3).forEach {
+                        cache
+                            .getOrPut(keys[it], ::throwError)
+                            .shouldBeExactly(values[it])
+                    }
+
+                    // Insert to nye elementer, som betyr at to første/eldste (ikke-utgåtte) elementer blir kastet ut av cachen
+                    (4..5).forEach {
+                        every { LocalDateTime.now() } returns origoDateTime.plus(it * 10.minutes)
+                        cache.getOrPut(keys[it]) { values[it] }
+                    }
+
+                    // Sjekk at tredje element og nye fremdeles er cachet og ikke kastet ut
+                    (2..5).forEach {
+                        cache
+                            .getOrPut(keys[it], ::throwError)
+                            .shouldBeExactly(values[it])
+                    }
+
+                    // Sjekk at andre element har blitt kastet ut og dermed må insertes på ny
+                    var defaultWasCalled = false
+
+                    cache
+                        .getOrPut(keys[1]) {
+                            defaultWasCalled = true
+                            111
+                        }.shouldBeExactly(111)
+
+                    defaultWasCalled.shouldBeTrue()
                 }
+            }
 
-                // Sjekk at første/tidligste element er cachet
-                cache
-                    .getOrPut(keys[0], ::throwError)
-                    .shouldBeExactly(values[0])
+            test("ved overtredelse av maks antall elementer hvor mange utgåtte så kastes utgåtte elementer ut") {
+                mockStatic(LocalDateTime::class) {
+                    val origoDateTime = 28.juli.kl(12, 0, 0, 0)
+                    val values = (0..4).toList()
+                    val keys = values.map { "key-$it" }
 
-                // Insert nytt element, som betyr at første element blir kastet ut av cachen
-                cache.getOrPut(keys[4]) { values[4] }
+                    // Insert fire elementer (cachen blir full)
+                    (0..3).forEach {
+                        every { LocalDateTime.now() } returns origoDateTime.plus(it * 10.minutes)
+                        cache.getOrPut(keys[it]) { values[it] }
+                    }
 
-                // Sjekk at andre element fremdeles er cachet og ikke kastet ut
-                cache
-                    .getOrPut(keys[1], ::throwError)
-                    .shouldBeExactly(values[1])
+                    // Sjekk at elementer er cachet
+                    (0..3).forEach {
+                        cache
+                            .getOrPut(keys[it], ::throwError)
+                            .shouldBeExactly(values[it])
+                    }
 
-                // Sjekk at siste element er cachet
-                cache
-                    .getOrPut(keys[4], ::throwError)
-                    .shouldBeExactly(values[4])
+                    // Insert nytt element, som betyr at to utgåtte elementer blir kastet ut av cachen
+                    every { LocalDateTime.now() } returns origoDateTime.plus(75.minutes)
+                    cache.getOrPut(keys[4]) { values[4] }
 
-                // Sjekk at første element har blitt kastet ut og dermed må insertes på ny
-                var defaultWasCalled = false
+                    // Sjekk at ikke-utgåtte elementer fremdeles er cachet og ikke kastet ut
+                    (2..4).forEach {
+                        cache
+                            .getOrPut(keys[it], ::throwError)
+                            .shouldBeExactly(values[it])
+                    }
 
-                cache
-                    .getOrPut(keys[0]) {
-                        defaultWasCalled = true
-                        5
-                    }.shouldBeExactly(5)
+                    // Sjekk at andre element har blitt kastet ut og dermed må insertes på ny
+                    var defaultWasCalled = false
 
-                defaultWasCalled.shouldBeTrue()
+                    cache
+                        .getOrPut(keys[1]) {
+                            defaultWasCalled = true
+                            111
+                        }.shouldBeExactly(111)
+
+                    defaultWasCalled.shouldBeTrue()
+                }
+            }
+
+            test("ved overtredelse av maks antall elementer hvor få utgåtte så kastes utgåtte og deretter eldste elementer ut") {
+                mockStatic(LocalDateTime::class) {
+                    cache = LocalCache(LocalCache.Config(1.hours, 5))
+
+                    val origoDateTime = 31.juli.kl(12, 0, 0, 0)
+                    val values = (0..8).toList()
+                    val keys = values.map { "key-$it" }
+
+                    // Insert fem elementer (cachen blir full)
+                    (0..4).forEach {
+                        every { LocalDateTime.now() } returns origoDateTime.plus(it * 10.minutes)
+                        cache.getOrPut(keys[it]) { values[it] }
+                    }
+
+                    // Sjekk at elementer er cachet
+                    (0..4).forEach {
+                        cache
+                            .getOrPut(keys[it], ::throwError)
+                            .shouldBeExactly(values[it])
+                    }
+
+                    // Insert fire nye elementer, som betyr at to utgåtte og to ikke-utgåtte elementer blir kastet ut av cachen
+                    (5..8).forEach {
+                        every { LocalDateTime.now() } returns origoDateTime.plus(75.minutes)
+                        cache.getOrPut(keys[it]) { values[it] }
+                    }
+
+                    // Sjekk at femte element og nye fremdeles er cachet og ikke kastet ut
+                    (4..8).forEach {
+                        cache
+                            .getOrPut(keys[it], ::throwError)
+                            .shouldBeExactly(values[it])
+                    }
+
+                    // Sjekk at fjerde element har blitt kastet ut og dermed må insertes på ny
+                    var defaultWasCalled = false
+
+                    cache
+                        .getOrPut(keys[3]) {
+                            defaultWasCalled = true
+                            333
+                        }.shouldBeExactly(333)
+
+                    defaultWasCalled.shouldBeTrue()
+                }
             }
         }
 
@@ -265,90 +372,222 @@ class LocalCacheTest :
             }
 
             test("ved utgått cache-element så erstattes element med resultat fra default-funksjon") {
-                cache = LocalCache(LocalCache.Config(Duration.ZERO, 4))
+                mockStatic(LocalDateTime::class) {
+                    val origoDateTime = 5.august.kl(12, 0, 0, 0)
+                    val inCacheExpired =
+                        mapOf(
+                            "key-1" to 1,
+                            "key-2" to 2,
+                        )
 
-                val inCacheExpired =
-                    mapOf(
-                        "key-1" to 1,
-                        "key-2" to 2,
-                    )
-                val notInCache =
-                    mapOf(
-                        "key-1" to 111,
-                        "key-2" to 222,
-                    )
+                    // Insert element som skal utgå
+                    every { LocalDateTime.now() } returns origoDateTime
+                    cache.getOrPut(inCacheExpired.keys) { inCacheExpired }
 
-                inCacheExpired.keys shouldContainExactly notInCache.keys
+                    // Sjekk at elementer har utgått og må erstattes
+                    every { LocalDateTime.now() } returns origoDateTime.plus(2.hours)
 
-                // Insert element som skal utgå
-                cache.getOrPut(inCacheExpired.keys) { inCacheExpired }
+                    var keysNotInCache = emptySet<String>()
+                    val replacementInCacheExpired = inCacheExpired.mapValues { it.value * 111 }
 
-                // Vent til element utgår
-                delay(10.milliseconds)
+                    cache
+                        .getOrPut(inCacheExpired.keys) { keysNotFound ->
+                            keysNotInCache = keysNotFound
+                            replacementInCacheExpired
+                        }.shouldContainExactly(replacementInCacheExpired)
 
-                // Sjekk at elementet har utgått og må erstattes
-                var defaultWasCalled = false
-
-                cache
-                    .getOrPut(notInCache.keys) {
-                        defaultWasCalled = true
-                        notInCache
-                    }.shouldContainExactly(notInCache)
-
-                defaultWasCalled.shouldBeTrue()
+                    keysNotInCache shouldContainExactly inCacheExpired.keys
+                }
             }
 
-            test("ved overtredelse av maks antall cachede elementer kastes første (tidligste) element ut") {
-                val firstKey = "key-1"
-                val inCache =
-                    mapOf(
-                        firstKey to 1,
-                        "key-2" to 2,
-                        "key-3" to 3,
-                    )
-                val newToCache =
-                    mapOf(
-                        "key-4" to 4,
-                        "key-5" to 5,
-                    )
-
-                // Insert tre første element (cachen blir nesten full)
-                cache.getOrPut(inCache.keys) { inCache }
-
-                // Sjekk at første/tidligste element er cachet
-                cache
-                    .getOrPut(setOf(firstKey)) { throwError() }
-                    .shouldContainExactly(
+            test("ved overtredelse av maks antall elementer hvor ingen utgåtte så kastes eldste elementer ut") {
+                mockStatic(LocalDateTime::class) {
+                    val origoDateTime = 11.august.kl(12, 0, 0, 0)
+                    val inCacheExcess =
                         mapOf(
-                            inCache.toList().first(),
-                        ),
-                    )
+                            "key-1" to 1,
+                        )
+                    val inCache =
+                        mapOf(
+                            "key-2" to 2,
+                            "key-3" to 3,
+                        )
+                    val newToCache =
+                        mapOf(
+                            "key-4" to 4,
+                            "key-5" to 5,
+                        )
 
-                // Insert to nye elementer, som betyr at første element blir kastet ut av cachen
-                cache.getOrPut(newToCache.keys) { newToCache }
+                    // Insert tre første element (cachen blir nesten full)
+                    every { LocalDateTime.now() } returnsMany List(inCacheExcess.size + inCache.size) { origoDateTime.plus(it * 10.minutes) }
 
-                // Sjekk at andre og tredje element fremdeles er cachet og ikke kastet ut
-                cache
-                    .getOrPut(inCache.minus(firstKey).keys) { throwError() }
-                    .shouldContainExactly(inCache.minus(firstKey))
+                    cache.getOrPut(inCacheExcess.keys + inCache.keys) { inCacheExcess + inCache }
 
-                // Sjekk at fjerde og femte element er cachet
-                cache
-                    .getOrPut(newToCache.keys) { throwError() }
-                    .shouldContainExactly(newToCache)
+                    // Sjekk at første/eldste element er cachet
+                    cache
+                        .getOrPut(inCacheExcess.keys) { throwError() }
+                        .shouldContainExactly(inCacheExcess)
 
-                // Sjekk at første element har blitt kastet ut og dermed må insertes på ny
-                var defaultWasCalled = false
+                    // Insert to nye elementer, som betyr at første/eldste element blir kastet ut av cachen
+                    every { LocalDateTime.now() } returns origoDateTime.plus(30.minutes)
 
-                cache
-                    .getOrPut(setOf(firstKey)) {
-                        defaultWasCalled = true
-                        mapOf(firstKey to 6)
-                    }.shouldContainExactly(mapOf(firstKey to 6))
+                    cache.getOrPut(newToCache.keys) { newToCache }
 
-                defaultWasCalled.shouldBeTrue()
+                    // Sjekk at andre og tredje element fremdeles er cachet og ikke kastet ut
+                    cache
+                        .getOrPut(inCache.keys) { throwError() }
+                        .shouldContainExactly(inCache)
+
+                    // Sjekk at nye elementer er cachet
+                    cache
+                        .getOrPut(newToCache.keys) { throwError() }
+                        .shouldContainExactly(newToCache)
+
+                    // Sjekk at første/eldste element har blitt kastet ut og dermed må insertes på ny
+                    var keysNotInCache = emptySet<String>()
+                    val replacementInCacheExcess = inCacheExcess.mapValues { it.value * 111 }
+
+                    cache
+                        .getOrPut(inCacheExcess.keys) { keysNotFound ->
+                            keysNotInCache = keysNotFound
+                            replacementInCacheExcess
+                        }.shouldContainExactly(replacementInCacheExcess)
+
+                    keysNotInCache shouldContainExactly inCacheExcess.keys
+                }
+            }
+
+            test("ved overtredelse av maks antall elementer hvor mange utgåtte så kastes utgåtte elementer ut") {
+                mockStatic(LocalDateTime::class) {
+                    cache = LocalCache(LocalCache.Config(1.hours, 5))
+
+                    val origoDateTime = 25.august.kl(12, 0, 0, 0)
+                    val inCacheExpired =
+                        mapOf(
+                            "key-1" to 1,
+                            "key-2" to 2,
+                            "key-3" to 3,
+                        )
+                    val inCache =
+                        mapOf(
+                            "key-4" to 4,
+                        )
+                    val newToCache =
+                        mapOf(
+                            "key-5" to 5,
+                            "key-6" to 6,
+                        )
+
+                    // Insert fire elementer (cachen blir nesten full)
+                    every { LocalDateTime.now() } returnsMany List(inCacheExpired.size + inCache.size) { origoDateTime.plus(it * 10.minutes) }
+
+                    cache.getOrPut(inCacheExpired.keys + inCache.keys) { inCacheExpired + inCache }
+
+                    // Sjekk at elementer er cachet
+                    cache
+                        .getOrPut(inCacheExpired.keys + inCache.keys) { throwError() }
+                        .shouldContainExactly(inCacheExpired + inCache)
+
+                    // Insert to nye elementer, som betyr at tre utgåtte elementer blir kastet ut av cachen
+                    every { LocalDateTime.now() } returns origoDateTime.plus(85.minutes)
+
+                    cache.getOrPut(newToCache.keys) { newToCache }
+
+                    // Sjekk at ikke-utgåtte elementer fremdeles er cachet og ikke kastet ut
+                    cache
+                        .getOrPut(inCache.keys) { throwError() }
+                        .shouldContainExactly(inCache)
+
+                    // Sjekk at nye elementer er cachet
+                    cache
+                        .getOrPut(newToCache.keys) { throwError() }
+                        .shouldContainExactly(newToCache)
+
+                    // Sjekk at utgåtte element har blitt kastet ut og dermed må insertes på ny
+                    var keysNotInCache = emptySet<String>()
+                    val replacementInCacheExpired = inCacheExpired.mapValues { it.value * 111 }
+
+                    cache
+                        .getOrPut(inCacheExpired.keys) { keysNotFound ->
+                            keysNotInCache = keysNotFound
+                            replacementInCacheExpired
+                        }.shouldContainExactly(replacementInCacheExpired)
+
+                    keysNotInCache shouldContainExactly inCacheExpired.keys
+                }
+            }
+
+            test("ved overtredelse av maks antall elementer hvor få utgåtte så kastes utgåtte og deretter eldste elementer ut") {
+                mockStatic(LocalDateTime::class) {
+                    cache = LocalCache(LocalCache.Config(1.hours, 5))
+
+                    val origoDateTime = 30.august.kl(12, 0, 0, 0)
+                    val inCacheExpired =
+                        mapOf(
+                            "key-1" to 1,
+                            "key-2" to 2,
+                        )
+                    val inCacheExcess =
+                        mapOf(
+                            "key-3" to 3,
+                            "key-4" to 4,
+                        )
+                    val inCache =
+                        mapOf(
+                            "key-5" to 5,
+                        )
+                    val newToCache =
+                        mapOf(
+                            "key-6" to 6,
+                            "key-7" to 7,
+                            "key-8" to 8,
+                            "key-9" to 9,
+                        )
+
+                    // Insert fem elementer (cachen blir full)
+                    every { LocalDateTime.now() } returnsMany
+                        List(inCacheExpired.size + inCacheExcess.size + inCache.size) {
+                            origoDateTime.plus(it * 10.minutes)
+                        }
+
+                    cache.getOrPut(inCacheExpired.keys + inCacheExcess.keys + inCache.keys) { inCacheExpired + inCacheExcess + inCache }
+
+                    // Sjekk at elementer er cachet
+                    cache
+                        .getOrPut(inCacheExpired.keys + inCacheExcess.keys + inCache.keys) { throwError() }
+                        .shouldContainExactly(inCacheExpired + inCacheExcess + inCache)
+
+                    // Insert fire nye elementer, som betyr at to utgåtte og to ikke-utgåtte elementer blir kastet ut av cachen
+                    every { LocalDateTime.now() } returns origoDateTime.plus(75.minutes)
+
+                    cache.getOrPut(newToCache.keys) { newToCache }
+
+                    // Sjekk at ikke-utgåtte, yngste elementer fremdeles er cachet og ikke kastet ut
+                    cache
+                        .getOrPut(inCache.keys) { throwError() }
+                        .shouldContainExactly(inCache)
+
+                    // Sjekk at nye elementer er cachet
+                    cache
+                        .getOrPut(newToCache.keys) { throwError() }
+                        .shouldContainExactly(newToCache)
+
+                    // Sjekk at utgåtte og eldste elementer har blitt kastet ut og dermed må insertes på ny
+                    var keysNotInCache = emptySet<String>()
+                    val replacementInCacheExpiredAndExcess = (inCacheExpired + inCacheExcess).mapValues { it.value * 111 }
+
+                    cache
+                        .getOrPut(inCacheExpired.keys + inCacheExcess.keys) { keysNotFound ->
+                            keysNotInCache = keysNotFound
+                            replacementInCacheExpiredAndExcess
+                        }.shouldContainExactly(replacementInCacheExpiredAndExcess)
+
+                    keysNotInCache shouldContainExactly (inCacheExpired.keys + inCacheExcess.keys)
+                }
             }
         }
     })
 
 private fun throwError(): Nothing = throw AssertionError("Denne funksjonen skal ikke kalles.")
+
+private fun LocalDateTime.plus(duration: Duration): LocalDateTime = plus(duration.toJavaDuration())

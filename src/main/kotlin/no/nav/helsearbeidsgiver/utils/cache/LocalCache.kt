@@ -1,6 +1,8 @@
 package no.nav.helsearbeidsgiver.utils.cache
 
 import no.nav.helsearbeidsgiver.utils.collection.mapValuesNotNull
+import no.nav.helsearbeidsgiver.utils.log.logger
+import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import java.time.LocalDateTime
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
@@ -17,6 +19,8 @@ class LocalCache<T>(
         require(config.maxEntries > 0) { "Parameter `maxEntries` must be greater than 0, but was ${config.maxEntries}." }
     }
 
+    private val logger = logger()
+    private val sikkerLogger = sikkerLogger()
     private val cache = mutableMapOf<String, Entry<T>>()
 
     suspend fun getOrPut(
@@ -58,8 +62,9 @@ class LocalCache<T>(
         key: String,
         value: T,
     ): T {
-        while (cache.size >= config.maxEntries) {
-            removeEntryExpiringEarliest()
+        if (cache.size >= config.maxEntries) {
+            removeExpiredEntries()
+            removeExcessEntries()
         }
 
         cache[key] =
@@ -71,10 +76,25 @@ class LocalCache<T>(
         return value
     }
 
-    private fun removeEntryExpiringEarliest() {
+    private fun removeExpiredEntries() {
         cache
-            .minByOrNull { it.value.expiresAt }
-            ?.also { cache.remove(it.key) }
+            .filterNot { it.value.isNotExpired() }
+            .forEach { cache.remove(it.key) }
+    }
+
+    private fun removeExcessEntries() {
+        val excess = 1 + cache.size - config.maxEntries
+        if (excess > 0) {
+            "Cache fjerner ikke-utgåtte elementer for å få plass til nye. Vurder å øke maks antall elementer.".also {
+                logger.warn(it)
+                sikkerLogger.warn(it)
+            }
+            cache
+                .toList()
+                .sortedBy { it.second.expiresAt }
+                .take(excess)
+                .forEach { cache.remove(it.first) }
+        }
     }
 }
 

@@ -2,8 +2,6 @@ package no.nav.helsearbeidsgiver.utils.log
 
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.data.Row2
-import io.kotest.data.row
 import io.kotest.matchers.collections.shouldBeUnique
 import io.kotest.matchers.collections.shouldNotContainNull
 import io.kotest.matchers.nulls.shouldBeNull
@@ -57,9 +55,9 @@ class MdcUtilsTest :
         }
 
         // Bruker eksplisitt typesignatur i liste for å kunne bruke referanser til generiske funksjoner
-        listOf<Row2<(() -> String) -> String, String>>(
-            row(MdcUtils::withCallId, navn(MdcUtils::withCallId)),
-            row(MdcUtils::withCallIdAsUuid, navn(MdcUtils::withCallIdAsUuid)),
+        listOf<Pair<(() -> String) -> String, String>>(
+            Pair(MdcUtils::withCallId, navn(MdcUtils::withCallId)),
+            Pair(MdcUtils::withCallIdAsUuid, navn(MdcUtils::withCallIdAsUuid)),
         ).forEach { (withCallIdFnToTest, nameFnToTest) ->
             context(nameFnToTest) {
                 test("callId legges til MDC") {

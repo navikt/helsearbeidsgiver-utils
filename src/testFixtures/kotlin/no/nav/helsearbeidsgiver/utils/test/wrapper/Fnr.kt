@@ -25,7 +25,7 @@ fun Fnr.Companion.genererGyldig(
         val foedseldato =
             LocalDate
                 .ofYearDay(
-                    Random.nextInt(1900, 2024),
+                    Random.nextInt(1900, 2026),
                     Random.nextInt(1, 366),
                 ).format(foedselsdatoFormatter)
 

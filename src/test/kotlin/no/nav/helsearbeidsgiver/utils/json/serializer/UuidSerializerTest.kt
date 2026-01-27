@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.SerializationException
 import no.nav.helsearbeidsgiver.utils.json.fromJson
-import no.nav.helsearbeidsgiver.utils.json.toJsonStr
+import no.nav.helsearbeidsgiver.utils.json.toJson
 import java.util.UUID
 
 private const val MOCK_UUID = "01234567-abcd-0123-abcd-012345678901"
@@ -15,7 +15,7 @@ class UuidSerializerTest :
         test("serialiserer korrekt") {
             val uuid = UUID.fromString(MOCK_UUID)
 
-            val json = uuid.toJsonStr(UuidSerializer)
+            val json = uuid.toJson(UuidSerializer).toString()
 
             json shouldBe "\"$MOCK_UUID\""
         }

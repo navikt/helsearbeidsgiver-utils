@@ -5,7 +5,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
 import no.nav.helsearbeidsgiver.utils.json.fromJson
-import no.nav.helsearbeidsgiver.utils.json.toJsonStr
+import no.nav.helsearbeidsgiver.utils.json.toJson
 
 class SerializerUtilsKtTest :
     FunSpec({
@@ -17,7 +17,7 @@ class SerializerUtilsKtTest :
             val testSerializer = Int.serializer().nullable.list()
 
             test("serialiserer korrekt") {
-                val json = nullableInts.toJsonStr(testSerializer)
+                val json = nullableInts.toJson(testSerializer).toString()
 
                 json shouldBe nullableIntsJson
             }
@@ -36,7 +36,7 @@ class SerializerUtilsKtTest :
             val testSerializer = Double.serializer().nullable.set()
 
             test("serialiserer korrekt") {
-                val json = nullableDoubleSet.toJsonStr(testSerializer)
+                val json = nullableDoubleSet.toJson(testSerializer).toString()
 
                 json shouldBe nullableDoubleSetJson
             }

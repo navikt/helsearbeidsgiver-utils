@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.SerializationException
 import no.nav.helsearbeidsgiver.utils.json.fromJson
-import no.nav.helsearbeidsgiver.utils.json.toJsonStr
+import no.nav.helsearbeidsgiver.utils.json.toJson
 import no.nav.helsearbeidsgiver.utils.test.date.februar
 import no.nav.helsearbeidsgiver.utils.test.date.juni
 import java.time.LocalDateTime
@@ -20,7 +20,7 @@ class DateSerializersKtTest :
             test("serialiserer korrekt") {
                 val maaned = YearMonth.of(1800, Month.APRIL)
 
-                val json = maaned.toJsonStr(YearMonthSerializer)
+                val json = maaned.toJson(YearMonthSerializer).toString()
 
                 json shouldBe "\"1800-04\""
             }
@@ -44,7 +44,7 @@ class DateSerializersKtTest :
             test("serialiserer korrekt") {
                 val dato = 12.februar(1815)
 
-                val json = dato.toJsonStr(LocalDateSerializer)
+                val json = dato.toJson(LocalDateSerializer).toString()
 
                 json shouldBe "\"1815-02-12\""
             }
@@ -68,7 +68,7 @@ class DateSerializersKtTest :
             test("serialiserer korrekt") {
                 val tidspunkt = LocalDateTime.of(1830, Month.MARCH, 30, 10, 41, 42, 444_444_444)
 
-                val json = tidspunkt.toJsonStr(LocalDateTimeSerializer)
+                val json = tidspunkt.toJson(LocalDateTimeSerializer).toString()
 
                 json shouldBe "\"1830-03-30T10:41:42.444444444\""
             }
@@ -94,7 +94,7 @@ class DateSerializersKtTest :
             test("serialiserer korrekt") {
                 val tidspunkt = OffsetDateTime.of(1907, 8, 12, 12, 23, 34, 555_555_555, sevenHourOffset)
 
-                val json = tidspunkt.toJsonStr(OffsetDateTimeSerializer)
+                val json = tidspunkt.toJson(OffsetDateTimeSerializer).toString()
 
                 json shouldBe "\"1907-08-12T12:23:34.555555555+07:00\""
             }

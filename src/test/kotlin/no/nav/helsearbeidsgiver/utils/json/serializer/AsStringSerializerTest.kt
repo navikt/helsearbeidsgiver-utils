@@ -5,7 +5,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.SerializationException
 import no.nav.helsearbeidsgiver.utils.json.fromJson
-import no.nav.helsearbeidsgiver.utils.json.toJsonStr
+import no.nav.helsearbeidsgiver.utils.json.toJson
 
 private object TestSerializer : AsStringSerializer<ChaosGod>(
     serialName = "helsearbeidsgiver.kotlinx.AsStringSerializer.test",
@@ -24,7 +24,7 @@ class AsStringSerializerTest :
                     domain = "disease and decay",
                 )
 
-            val json = nurgle.toJsonStr(TestSerializer)
+            val json = nurgle.toJson(TestSerializer).toString()
 
             json shouldBe "\"Nurgle rules disease and decay\""
         }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-class LocalCache<T>(
+class LocalCache<T : Any>(
     private val config: Config,
 ) {
     data class Config(
@@ -28,9 +28,17 @@ class LocalCache<T>(
         default: suspend () -> T,
     ): T =
         getNotExpired(key)
-            ?: put(key, default())
+            ?: default().let { put(key, it) }
 
-    /** Parameter in `default`-function is keys which were not found in cache. */
+    /** Caches the return value from [default] only if that value is non-null. */
+    suspend fun getOrPutOrNull(
+        key: String,
+        default: suspend () -> T?,
+    ): T? =
+        getNotExpired(key)
+            ?: default()?.let { put(key, it) }
+
+    /** Parameter in [default] is keys which were not found in cache. */
     suspend fun getOrPut(
         keys: Set<String>,
         default: suspend (Set<String>) -> Map<String, T>,

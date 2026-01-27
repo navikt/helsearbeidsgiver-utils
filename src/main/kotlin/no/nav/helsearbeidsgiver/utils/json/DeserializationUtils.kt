@@ -1,6 +1,5 @@
 package no.nav.helsearbeidsgiver.utils.json
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.json.Json
@@ -8,7 +7,6 @@ import kotlinx.serialization.json.JsonElement
 import no.nav.helsearbeidsgiver.utils.collection.mapKeysNotNull
 import no.nav.helsearbeidsgiver.utils.json.serializer.GenericObjectSerializer
 
-@OptIn(ExperimentalSerializationApi::class)
 val jsonConfig =
     Json {
         ignoreUnknownKeys = true

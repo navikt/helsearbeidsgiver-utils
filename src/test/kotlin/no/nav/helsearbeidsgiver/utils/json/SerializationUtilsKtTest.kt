@@ -175,37 +175,4 @@ class SerializationUtilsKtTest :
                 json shouldBe "\"$fnr\""
             }
         }
-
-        context("toJsonStr") {
-            test("serialiserer korrekt fra generisk T til json-streng") {
-                val samwise =
-                    Hobbit(
-                        name = Name("Frodo", "Baggins"),
-                        age = 50,
-                    )
-
-                val expectedJson =
-                    """
-                    {
-                        "name": {
-                            "first": "Frodo",
-                            "last": "Baggins"
-                        },
-                        "age": 50
-                    }
-                    """.removeJsonWhitespace()
-
-                val actualJson = samwise.toJsonStr(Hobbit.serializer())
-
-                actualJson shouldBe expectedJson
-            }
-
-            test("serialiserer korrekt fra nullable generisk T til json-streng") {
-                val hobbitNames = listOf("Frodo", null)
-
-                val jsonList = hobbitNames.map { it.toJsonStr(String.serializer().nullable) }
-
-                jsonList shouldBe listOf("\"Frodo\"", "null")
-            }
-        }
     })

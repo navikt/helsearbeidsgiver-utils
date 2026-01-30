@@ -19,8 +19,6 @@ import java.util.UUID
 
 fun <T> T.toJson(serializer: KSerializer<T>): JsonElement = Json.encodeToJsonElement(serializer, this)
 
-fun <T> T.toJsonStr(serializer: KSerializer<T>): String = toJson(serializer).toString()
-
 fun <T> List<T>.toJson(elementSerializer: KSerializer<T>): JsonElement =
     toJson(
         elementSerializer.list(),

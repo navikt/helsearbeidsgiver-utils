@@ -4,7 +4,9 @@ import no.nav.helsearbeidsgiver.utils.collection.mapValuesNotNull
 import no.nav.helsearbeidsgiver.utils.log.logger
 import no.nav.helsearbeidsgiver.utils.log.sikkerLogger
 import java.time.LocalDateTime
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration
+import kotlin.time.measureTime
 import kotlin.time.toJavaDuration
 
 class LocalCache<T : Any>(
@@ -13,6 +15,7 @@ class LocalCache<T : Any>(
     data class Config(
         val entryDuration: Duration,
         val maxEntries: Int,
+        val sync: Boolean = false,
     )
 
     init {
@@ -21,14 +24,15 @@ class LocalCache<T : Any>(
 
     private val logger = logger()
     private val sikkerLogger = sikkerLogger()
-    private val cache = mutableMapOf<String, Entry<T>>()
+    private val cache = ConcurrentHashMap<String, Entry<T>>(config.maxEntries)
+    private val lock = Any()
 
     suspend fun getOrPut(
         key: String,
         default: suspend () -> T,
     ): T =
         getNotExpired(key)
-            ?: default().let { put(key, it) }
+            ?: put(key, default())
 
     /** Caches the return value from [default] only if that value is non-null. */
     suspend fun getOrPutOrNull(
@@ -71,8 +75,17 @@ class LocalCache<T : Any>(
         value: T,
     ): T {
         if (cache.size >= config.maxEntries) {
-            removeExpiredEntries()
-            removeExcessEntries()
+            val tidBrukt =
+                measureTime {
+                    if (config.sync) {
+                        synchronized(lock) {
+                            cleanupCache()
+                        }
+                    } else {
+                        cleanupCache()
+                    }
+                }
+            sikkerLogger.info("Cache-opprydning tok $tidBrukt ms")
         }
 
         cache[key] =
@@ -82,6 +95,11 @@ class LocalCache<T : Any>(
             )
 
         return value
+    }
+
+    private fun cleanupCache() {
+        removeExpiredEntries()
+        removeExcessEntries()
     }
 
     private fun removeExpiredEntries() {

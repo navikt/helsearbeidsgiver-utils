@@ -15,7 +15,7 @@ class LocalCache<T : Any>(
     data class Config(
         val entryDuration: Duration,
         val maxEntries: Int,
-        val sync: Boolean = false,
+        val concurrency: Boolean = false,
     )
 
     init {
@@ -77,7 +77,7 @@ class LocalCache<T : Any>(
         if (cache.size >= config.maxEntries) {
             val tidBrukt =
                 measureTime {
-                    if (config.sync) {
+                    if (config.concurrency) {
                         synchronized(lock) {
                             cleanupCache()
                         }
